@@ -50,6 +50,7 @@ import {
   CashLedgerScreen,
   CashRecordScreen,
 } from "./cash-screens";
+import { BrandLogo } from "@/components/brand-logo";
 
 export function EmployeeApp({ data }: { data: EmployeeAppData }) {
   const router = useRouter();
@@ -209,19 +210,13 @@ export function EmployeeApp({ data }: { data: EmployeeAppData }) {
     <div className="emp-shell">
       <aside className="hidden md:flex flex-col w-72 shrink-0 h-full bg-white" style={{ borderRight: "1px solid #EEF1EE" }}>
         <div className="px-6 py-6 shrink-0" style={{ borderBottom: "1px solid #EEF1EE" }}>
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#1B7A3D" }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M12 3c-2 3-6 5-6 10a6 6 0 0012 0c0-5-4-7-6-10z" fill="white" />
-                <path d="M12 8v8M9 12c1.2-1.5 2-2 3-2s1.8.5 3 2" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#1B7A3D" }}>Agri Setu</p>
+          <div className="flex items-center gap-3">
+            <BrandLogo size={48} />
+            <div className="min-w-0">
               <p className="text-sm font-bold leading-tight" style={{ color: "#1A2E1E" }}>White Store</p>
+              <p className="text-xs mt-0.5 truncate" style={{ color: "#8FA898" }}>{data.storeName}</p>
             </div>
           </div>
-          <p className="text-xs mt-2 truncate" style={{ color: "#8FA898" }}>{data.storeName}</p>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {([

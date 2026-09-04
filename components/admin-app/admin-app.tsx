@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import {
   LayoutDashboard, Store, ArrowLeftRight, Package, Archive,
   Users, BarChart3, Bell, LogOut, Search, X,
-  ChevronRight, Leaf, DollarSign, AlertTriangle, Info, ChevronsRight, Receipt, Radio
+  ChevronRight, DollarSign, AlertTriangle, Info, ChevronsRight, Receipt, Radio
 } from "lucide-react";
 import { signOut } from "@/lib/actions";
 import { useAdminData } from "./data-context";
@@ -19,6 +19,7 @@ import Inventory from "./pages/Inventory";
 import UsersPage from "./pages/UsersPage";
 import Reports from "./pages/Reports";
 import SimulatedNetwork from "./pages/SimulatedNetwork";
+import { BrandLogo } from "@/components/brand-logo";
 
 const navItems = [
   { id: "dashboard" as Page, label: "Dashboard", icon: LayoutDashboard },
@@ -311,21 +312,11 @@ export function AdminApp() {
         className="hidden md:flex flex-col h-full flex-shrink-0 select-none bg-white"
         style={{ width: 256, borderRight: "1px solid #EEF1EE" }}
       >
-        <div className="flex items-center gap-2.5 px-5 h-16 border-b border-[#EEF1EE]">
-          <div className="w-8 h-8 rounded-xl bg-[#1B7A3D] flex items-center justify-center">
-            <Leaf size={16} className="text-white" />
-          </div>
-          <div>
-            <span
-              className="text-[15px] font-semibold text-[#1A2E1E] tracking-tight"
-              style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
-            >
-              Agri Setu
-            </span>
-            <p className="text-[10px] text-[#8FA898] font-medium tracking-wide uppercase mt-px">
-              Admin Console
-            </p>
-          </div>
+        <div className="flex items-center gap-2.5 px-5 h-[72px] border-b border-[#EEF1EE]">
+          <BrandLogo size={44} />
+          <p className="text-[10px] text-[#8FA898] font-medium tracking-wide uppercase">
+            Admin Console
+          </p>
         </div>
 
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { ROLE_HOME, ROLE_LABELS, type UserRole } from "@/lib/types";
 import { inputClass } from "@/components/action-form";
+import { BrandLogo } from "@/components/brand-logo";
 
 const ROLES: UserRole[] = ["farmer", "store", "buyer", "logistics"];
 
@@ -49,11 +50,8 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-off-white px-4 py-8">
       <div className="w-full max-w-md">
-        <Link href="/" className="mb-6 flex items-center justify-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-primary text-xl">
-            🌾
-          </span>
-          <span className="text-2xl font-bold text-text-primary">Agri Setu</span>
+        <Link href="/" className="mb-6 flex justify-center">
+          <BrandLogo size="lg" priority />
         </Link>
 
         <div className="rounded-2xl border border-hairline bg-white p-6 shadow-sm">

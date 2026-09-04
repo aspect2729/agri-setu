@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand-logo";
 
 const STEPS = [
   { icon: "🧑‍🌾", title: "Farmer lists produce", text: "The farmer picks the nearest White Store — suggested automatically — and lists what they're bringing." },
@@ -21,10 +22,9 @@ export default function LandingPage() {
       {/* Nav */}
       <header className="border-b border-hairline">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-green-primary text-xl">🌾</span>
-            <span className="text-xl font-bold text-text-primary">Agri Setu</span>
-          </div>
+          <Link href="/" className="flex items-center">
+            <BrandLogo size={48} priority />
+          </Link>
           <div className="flex items-center gap-3">
             <Link href="/login" className="rounded-xl px-4 py-2 text-sm font-semibold text-green-primary transition hover:bg-green-light">
               Sign in
@@ -39,6 +39,9 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="bg-gradient-to-b from-green-light/70 to-white">
         <div className="mx-auto max-w-4xl px-4 py-20 text-center">
+          <div className="mb-6 flex justify-center">
+            <BrandLogo size="lg" priority />
+          </div>
           <p className="mb-4 inline-block rounded-full bg-green-light px-4 py-1 text-xs font-semibold uppercase tracking-wide text-green-dark">
             Smart India Hackathon
           </p>

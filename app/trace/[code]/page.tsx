@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { formatINR } from "@/lib/utils";
 import { StatusBadge } from "@/components/ui";
 import { PrintLabelButton } from "@/components/qr/PrintLabelButton";
+import { BrandLogo } from "@/components/brand-logo";
 
 export const dynamic = "force-dynamic";
 
@@ -54,9 +55,8 @@ export default async function TracePage({ params }: PageProps<"/trace/[code]">) 
     <div className="min-h-screen bg-off-white">
       <header className="border-b border-hairline bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-green-primary text-lg">🌾</span>
-            <span className="text-lg font-bold text-text-primary">Agri Setu</span>
+          <Link href="/" className="flex items-center">
+            <BrandLogo size={40} />
           </Link>
           <div className="flex items-center gap-3 print:hidden">
             <span className="text-xs font-semibold uppercase tracking-wide text-green-primary">

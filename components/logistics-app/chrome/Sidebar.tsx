@@ -2,6 +2,7 @@
 
 import { signOut } from "@/lib/actions";
 import { DemoBadge } from "@/components/demo-badge";
+import { BrandLogo } from "@/components/brand-logo";
 import { useLogisticsData } from "../data-context";
 import { isActiveStatus } from "../demo-data";
 import type { NavigateFn, Page } from "../types";
@@ -125,18 +126,12 @@ export default function Sidebar({ currentPage, navigate, isOpen, onClose }: Side
       `}
     >
       <div className="px-5 py-5 border-b border-slate-100 shrink-0 flex items-start justify-between gap-2">
-        <button onClick={() => navigate("dashboard")} className="flex items-center gap-3 w-full text-left group">
-          <div className="w-9 h-9 flex items-center justify-center rounded-xl bg-green-600 shrink-0 group-hover:bg-green-700 transition-colors">
-            <svg viewBox="0 0 32 32" className="w-5 h-5" fill="none">
-              <path d="M8 25c0-8 6-13 15-13-1.5 5.5-5.5 11-15 13z" fill="white" />
-              <path d="M23 12c-3.5 8-9 12-15 13" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
-              <circle cx="23" cy="12" r="2.5" fill="white" />
-            </svg>
-          </div>
-          <div>
-            <div className="text-[13.5px] font-semibold text-slate-900 leading-tight tracking-tight">Agri Setu</div>
+        <button onClick={() => navigate("dashboard")} className="flex items-center gap-3 w-full text-left group min-w-0">
+          <BrandLogo size={44} />
+          <div className="min-w-0">
+            <div className="text-[13.5px] font-semibold text-slate-900 leading-tight tracking-tight">Logistics</div>
             <div className="text-[11px] text-slate-400 leading-tight mt-0.5 font-medium flex items-center gap-1.5">
-              Logistics Partner
+              Partner
               <DemoBadge className="scale-90 origin-left" />
             </div>
           </div>

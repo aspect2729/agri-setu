@@ -7,11 +7,12 @@ import { addProduce, declareCrop, loadFarmWeather, signOut } from "@/lib/actions
 import type { FarmWeather } from "@/lib/weather";
 import { MONTHS, t, type Lang } from "./translations";
 import { WeatherHomeCard, WeatherScreen } from "./weather-view";
+import { BrandLogo } from "@/components/brand-logo";
 import {
   IconHome, IconBasket, IconUser, IconStore, IconPayment, IconCalendar,
   IconTrend, IconCheck, IconChevronRight, IconArrowLeft,
   IconLogout, IconHistory, IconGlobe, IconQuality, IconSold, IconPlus,
-  IconLeaf, CropTomato, CropOnion, CropPotato, CropRice, CropWheat,
+  CropTomato, CropOnion, CropPotato, CropRice, CropWheat,
   CropChilli, CropBrinjal, CropOther, IllustrationCrate, IllustrationSuccess,
 } from "./icons";
 
@@ -271,11 +272,7 @@ function ProgressSteps({ step, lang }: { step: number; lang: Lang }) {
 }
 
 function AppLogo() {
-  return (
-    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#1B7A3D" }}>
-      <IconLeaf size={20} color="#fff" />
-    </div>
-  );
+  return <BrandLogo size={48} />;
 }
 
 // ── Root component ─────────────────────────────────────────────────────────
@@ -1289,12 +1286,9 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
       {/* Desktop sidebar */}
       <div className="hidden md:flex flex-col w-72 flex-shrink-0 h-full" style={{ background: "#fff", borderRight: "1px solid #EEF1EE" }}>
         <div className="px-6 py-6 flex-shrink-0" style={{ borderBottom: "1px solid #EEF1EE" }}>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <AppLogo />
-            <div>
-              <p className="font-bold text-sm leading-tight" style={{ color: "#1A2E1E" }}>{t("appName", lang)}</p>
-              <p className="text-xs" style={{ color: "#8FA898" }}>Farmer App</p>
-            </div>
+            <p className="text-xs font-medium" style={{ color: "#8FA898" }}>{lang === "kn" ? t("appName", lang) : "Farmer"}</p>
           </div>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">

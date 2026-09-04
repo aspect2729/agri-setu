@@ -12,6 +12,7 @@ import OrderTracking from "./views/OrderTracking";
 import QRVerify from "./views/QRVerify";
 import ClearanceDeals from "./views/ClearanceDeals";
 import Account from "./views/Account";
+import { BrandLogo } from "@/components/brand-logo";
 
 const NAV_ITEMS: { id: NavView; label: string; icon: React.ReactNode; activeIcon: React.ReactNode }[] = [
   {
@@ -139,16 +140,8 @@ export function BuyerApp() {
       <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-border">
         <div className="max-w-screen-2xl mx-auto px-4 md:px-8">
           <div className="flex items-center h-14 md:h-[72px] gap-3 md:gap-8">
-            <button onClick={() => navigate("marketplace")} className="flex items-center gap-2 shrink-0">
-              <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-forest-mid flex items-center justify-center">
-                <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
-                  <path d="M9 2C5.5 2 3 5 3 8c0 2.5 1.5 4.5 3.5 5.5L9 16l2.5-2.5C13.5 12.5 15 10.5 15 8c0-3-2.5-6-6-6z" fill="white" fillOpacity="0.9" />
-                  <path d="M9 5v7M6 7.5c1-1 2-1.5 3-1.5s2 .5 3 1.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" />
-                </svg>
-              </div>
-              <span className="font-serif text-base md:text-lg font-semibold text-forest tracking-tight">
-                Agri<span className="text-forest-mid">Setu</span>
-              </span>
+            <button onClick={() => navigate("marketplace")} className="flex items-center shrink-0">
+              <BrandLogo size={44} />
             </button>
 
             <nav className="hidden md:flex items-center gap-1 flex-1">

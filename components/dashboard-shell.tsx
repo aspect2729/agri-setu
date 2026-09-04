@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { signOut } from "@/lib/actions";
 import { ROLE_LABELS, type Profile } from "@/lib/types";
+import { BrandLogo } from "@/components/brand-logo";
 
 export function DashboardShell({
   profile,
@@ -18,11 +19,8 @@ export function DashboardShell({
     <div className="min-h-screen bg-off-white">
       <header className="border-b border-hairline bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-green-primary text-lg">
-              🌾
-            </span>
-            <span className="text-lg font-bold text-text-primary">Agri Setu</span>
+          <Link href="/" className="flex items-center">
+            <BrandLogo size={40} />
           </Link>
           <div className="flex items-center gap-3">
             <div className="text-right">
