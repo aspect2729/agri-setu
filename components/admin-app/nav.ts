@@ -8,6 +8,7 @@ export type Page =
   | "inventory"
   | "users"
   | "reports"
+  | "prices"
   | "simulated";
 
 export interface NavContext {

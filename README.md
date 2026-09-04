@@ -20,7 +20,7 @@ Farmers bring produce to their nearest White Store (suggested automatically). St
 - **Store employee** — register farmers, record walk-in produce, weighing, quality grading, immediate farmer payment, batch + QR creation, order accept/dispatch, inventory
 - **Store manager** — dashboard (sales, purchases, inventory, orders, cash balance), farmer records, transaction records, cash in/out ledger, employee accounts
 - **Buyer** — registration, browse produce with scoring + filters (price, grade, quantity, distance), batch details, direct ordering, order tracking, QR verification, delivery confirmation, order history
-- **Admin** — network overview, bulk matching, plus a **Simulated data** console (mock GMV, mandi prices, verification labels, payments, GPS)
+- **Admin** — network overview, bulk matching, **Market prices** (demo APMC / mandi feed), plus a **Simulated data** console (mock GMV, verification labels, payments, GPS)
 - **Logistics** — accept and progress live deliveries; board also overlays centralized mock trips / GPS / earnings
 - **Public** — `/trace/AGS-XXXXXX` batch verification page (what the QR opens)
 

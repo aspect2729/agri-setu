@@ -87,6 +87,10 @@ export const T: Record<string, Record<Lang, string>> = {
   weatherFetching:  { en: "Fetching farm-point forecast…", kn: "ಜಮೀನಿನ ಮುನ್ಸೂಚನೆ ತರಲಾಗುತ್ತಿದೆ…" },
   humidity:         { en: "Humidity",                    kn: "ಆರ್ದ್ರತೆ" },
   cropOutlook:      { en: "Crop outlook",                kn: "ಬೆಳೆ ನಿರೀಕ್ಷೆ" },
+  mandiPrices:      { en: "Mandi prices",                kn: "ಮಂಡಿ ಬೆಲೆ" },
+  mandiPricesSub:   { en: "Nearby APMC modal prices. White Store pays on the spot at Grade A.", kn: "ಹತ್ತಿರದ APMC ಬೆಲೆ. ವೈಟ್ ಸ್ಟೋರ್ ಗ್ರೇಡ್ Aಗೆ ತಕ್ಷಣ ಪಾವತಿ." },
+  demoMandi:        { en: "Demo mandi",                  kn: "ಡೆಮೋ ಮಂಡಿ" },
+  whiteStorePays:   { en: "White Store pays today",      kn: "ವೈಟ್ ಸ್ಟೋರ್ ಇಂದು ಕೊಡುತ್ತದೆ" },
   noListings:       { en: "No produce listed yet. Tap List Produce to start.", kn: "ಇನ್ನೂ ಉತ್ಪನ್ನ ಪಟ್ಟಿ ಮಾಡಿಲ್ಲ. ಪ್ರಾರಂಭಿಸಲು 'ಉತ್ಪನ್ನ ಪಟ್ಟಿ ಮಾಡಿ' ಒತ್ತಿ." },
   dropSuccessSub:   { en: "Drop your produce at the White Store and get paid instantly.", kn: "ವೈಟ್ ಸ್ಟೋರ್‌ನಲ್ಲಿ ತಂದು ಬಿಡಿ, ತಕ್ಷಣ ಹಣ ಪಡೆಯಿರಿ." },
 };

@@ -174,6 +174,13 @@ export default function SimulatedNetwork({ navCtx: _navCtx }: { navCtx: NavConte
         <div className="space-y-4">
           <div className="flex items-center gap-3 flex-wrap">
             <DemoBadge label="SIMULATED MANDI" />
+            <button
+              type="button"
+              onClick={() => _navCtx.navigateTo("prices")}
+              className="px-3.5 py-1.5 rounded-lg text-[12px] font-semibold bg-[#1B7A3D] text-white"
+            >
+              Open full page →
+            </button>
             {["Tomato", "Onion", "Potato", "Cabbage", "Ragi", "Banana", "Chilli", "Beans"].map((c) => (
               <button
                 key={c}

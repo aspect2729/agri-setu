@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import {
   LayoutDashboard, Store, ArrowLeftRight, Package, Archive,
   Users, BarChart3, Bell, LogOut, Search, X,
-  ChevronRight, DollarSign, AlertTriangle, Info, ChevronsRight, Receipt, Radio
+  ChevronRight, DollarSign, AlertTriangle, Info, ChevronsRight, Receipt, Radio, LineChart
 } from "lucide-react";
 import { signOut } from "@/lib/actions";
 import { useAdminData } from "./data-context";
@@ -18,6 +18,7 @@ import Orders from "./pages/Orders";
 import Inventory from "./pages/Inventory";
 import UsersPage from "./pages/UsersPage";
 import Reports from "./pages/Reports";
+import MarketPrices from "./pages/MarketPrices";
 import SimulatedNetwork from "./pages/SimulatedNetwork";
 import { BrandLogo } from "@/components/brand-logo";
 
@@ -31,6 +32,7 @@ const navItems = [
   { id: "inventory" as Page, label: "Inventory", icon: Archive },
   { id: "users" as Page, label: "Users", icon: Users },
   { id: "reports" as Page, label: "Reports", icon: BarChart3 },
+  { id: "prices" as Page, label: "Market prices", icon: LineChart },
   { id: "simulated" as Page, label: "Simulated data", icon: Radio },
 ];
 
@@ -435,6 +437,7 @@ export function AdminApp() {
           {currentPage === "inventory" && <Inventory navCtx={navCtx} />}
           {currentPage === "users" && <UsersPage navCtx={navCtx} />}
           {currentPage === "reports" && <Reports navCtx={navCtx} />}
+          {currentPage === "prices" && <MarketPrices navCtx={navCtx} />}
           {currentPage === "simulated" && <SimulatedNetwork navCtx={navCtx} />}
         </main>
       </div>

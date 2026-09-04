@@ -7,10 +7,11 @@ import { addProduce, declareCrop, loadFarmWeather, signOut } from "@/lib/actions
 import type { FarmWeather } from "@/lib/weather";
 import { MONTHS, t, type Lang } from "./translations";
 import { WeatherHomeCard, WeatherScreen } from "./weather-view";
+import { MandiHomeCard, MandiPricesScreen } from "./market-prices-view";
 import { BrandLogo } from "@/components/brand-logo";
 import {
   IconHome, IconBasket, IconUser, IconStore, IconPayment, IconCalendar,
-  IconTrend, IconCheck, IconChevronRight, IconArrowLeft,
+  IconCheck, IconChevronRight, IconArrowLeft,
   IconLogout, IconHistory, IconGlobe, IconQuality, IconSold, IconPlus,
   CropTomato, CropOnion, CropPotato, CropRice, CropWheat,
   CropChilli, CropBrinjal, CropOther, IllustrationCrate, IllustrationSuccess,
@@ -64,7 +65,7 @@ export type FarmerAppData = {
 
 type Screen =
   | "home" | "list-crop" | "list-qty" | "list-store" | "list-success"
-  | "my-produce" | "track" | "declare" | "declare-done" | "profile" | "weather";
+  | "my-produce" | "track" | "declare" | "declare-done" | "profile" | "weather" | "prices";
 
 // ── Crops ──────────────────────────────────────────────────────────────────
 type CropIconComponent = (props: { size?: number; className?: string }) => React.ReactElement;
@@ -394,7 +395,7 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
   ];
 
   const isActive = (id: Screen) => {
-    if (id === "home") return ["home", "declare", "declare-done", "weather"].includes(screen);
+    if (id === "home") return ["home", "declare", "declare-done", "weather", "prices"].includes(screen);
     if (id === "list-crop") return ["list-crop", "list-qty", "list-store", "list-success"].includes(screen);
     if (id === "my-produce") return ["my-produce", "track"].includes(screen);
     return screen === id;
@@ -566,19 +567,7 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
                   lang={lang}
                   onOpen={() => setScreen("weather")}
                 />
-                <div className="rounded-2xl p-4" style={{ background: "#fff", boxShadow: "0 1px 6px rgba(0,0,0,0.05)" }}>
-                  <div className="flex items-center justify-between mb-3">
-                    <IconTrend size={20} color="#5A7263" />
-                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#FEF3E0", color: "#8A6020" }}>
-                      {t("beta", lang)}
-                    </span>
-                  </div>
-                  <p className="text-xs font-medium mb-0.5" style={{ color: "#8FA898" }}>{t("cropOutlook", lang)}</p>
-                  <p className="text-sm font-semibold" style={{ color: "#1A2E1E" }}>₹18–22 /kg</p>
-                  <p className="text-xs mt-0.5" style={{ color: "#8FA898" }}>
-                    {lang === "en" ? "Tomatoes · Next 2 weeks" : "ಟೊಮೇಟೊ · ಮುಂದಿನ 2 ವಾರ"}
-                  </p>
-                </div>
+                <MandiHomeCard lang={lang} onOpen={() => setScreen("prices")} />
               </div>
             </div>
           </div>
@@ -1264,6 +1253,15 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
         weather={weather}
         loading={weatherLoading}
         village={data.village}
+        lang={lang}
+        onBack={() => setScreen("home")}
+        onLangToggle={toggleLang}
+      />
+    );
+  }
+  else if (screen === "prices") {
+    screenNode = (
+      <MandiPricesScreen
         lang={lang}
         onBack={() => setScreen("home")}
         onLangToggle={toggleLang}
