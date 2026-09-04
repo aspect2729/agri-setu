@@ -12,8 +12,12 @@ import {
   FarmerAvatar,
   FieldInput,
   GradeBadge,
+  IcoCheck,
   IcoChevRight,
+  IcoClipboard,
+  IcoQr,
   IcoSearch,
+  IcoUsers,
   ProgressBar,
   SectionLabel,
   StatusPill,
@@ -110,18 +114,23 @@ export function DashboardScreen({
           ))}
         </div>
 
-        <div className="mt-5 md:mt-8 grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-8 items-stretch">
-          <div className="flex flex-col">
+        <div className="mt-5 md:mt-8 grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-8 items-start">
+          <div>
             <SectionLabel>Quick Actions</SectionLabel>
-            <div className="grid grid-cols-2 gap-3 md:gap-4 flex-1">
+            <div className="grid grid-cols-2 gap-3 md:gap-4">
               {[
-                { label: "Register Farmer", emoji: "👤", screen: "farmer-register" as Screen },
-                { label: "Log Produce", emoji: "📋", screen: "log-1" as Screen, dark: true },
-                { label: "Quality Check", emoji: "✅", screen: "quality-hub" as Screen },
-                { label: "Generate QR", emoji: "▣", screen: "quality-hub" as Screen },
+                { label: "Register Farmer", icon: <IcoUsers />, screen: "farmer-register" as Screen },
+                { label: "Log Produce", icon: <IcoClipboard />, screen: "log-1" as Screen, dark: true },
+                { label: "Quality Check", icon: <IcoCheck />, screen: "quality-hub" as Screen },
+                { label: "Generate QR", icon: <IcoQr />, screen: "quality-hub" as Screen },
               ].map((a) => (
-                <Card key={a.label} onClick={() => go(a.screen)} className="p-4 md:p-5 h-full min-h-[108px]" style={a.dark ? { background: "#1B7A3D", border: "none" } : {}}>
-                  <span className="text-2xl block mb-2">{a.emoji}</span>
+                <Card key={a.label} onClick={() => go(a.screen)} className="p-4 md:p-5" style={a.dark ? { background: "#1B7A3D", border: "none" } : {}}>
+                  <span
+                    className="mb-2 inline-flex h-10 w-10 shrink-0 items-center justify-center [&>svg]:h-6 [&>svg]:w-6"
+                    style={{ color: a.dark ? "#FFFFFF" : "#1B7A3D" }}
+                  >
+                    {a.icon}
+                  </span>
                   <p className="text-sm font-semibold md:text-[15px]" style={{ color: a.dark ? "#FFFFFF" : "#1A2E1E" }}>{a.label}</p>
                   {a.dark && <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.55)" }}>Most frequent</p>}
                 </Card>
