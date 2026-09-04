@@ -72,7 +72,7 @@ export function LogStep2({ log, go, onPick }: { log: LogState; go: (s: Screen) =
       <ProgressBar step={2} total={5} />
       <div className="flex-1 overflow-y-auto px-5 pb-6 pt-3">
         {log.farmer && <p className="text-sm mb-4" style={{ color: "#5A7263" }}>{log.farmer.name}</p>}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {CROPS.map((c) => (
             <Card key={c.id} onClick={() => onPick(c)} className="p-4 flex flex-col items-center gap-2"
               style={log.crop?.id === c.id ? { border: "2px solid #1B7A3D", background: "#E8F5EE" } : {}}>
@@ -262,9 +262,9 @@ export function QualityHubScreen({
           ))}
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto px-5 pb-6 flex flex-col gap-3 pt-1">
+      <div className="flex-1 overflow-y-auto px-5 pb-6 flex flex-col gap-3 pt-1 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3">
         {list.length === 0 ? (
-          <p className="py-16 text-center text-sm" style={{ color: "#8FA898" }}>Nothing in this list right now.</p>
+          <p className="py-16 text-center text-sm md:col-span-2 lg:col-span-3" style={{ color: "#8FA898" }}>Nothing in this list right now.</p>
         ) : (
           list.map((item) => (
             <Card key={item.id} className="p-4">

@@ -47,9 +47,16 @@ export function DashboardScreen({
   activity: { at: string; label: string; detail: string; type: string }[];
   go: (s: Screen) => void;
 }) {
+  const todayLabel = new Date().toLocaleDateString("en-IN", {
+    weekday: "short",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <div className="flex flex-col h-full overflow-y-auto">
-      <div className="px-5 pt-6 pb-5 flex-shrink-0" style={{ background: "#1B7A3D" }}>
+      <div className="md:hidden px-5 pt-6 pb-5 shrink-0" style={{ background: "#1B7A3D" }}>
         <div className="flex items-start justify-between mb-4">
           <div>
             <p className="text-sm font-medium mb-0.5" style={{ color: "rgba(255,255,255,0.8)" }}>{greeting()}</p>
@@ -62,77 +69,94 @@ export function DashboardScreen({
             </button>
           </form>
         </div>
-        <p className="text-xs" style={{ color: "rgba(255,255,255,0.45)" }}>
-          {new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "long", year: "numeric" })}
-        </p>
+        <p className="text-xs" style={{ color: "rgba(255,255,255,0.45)" }}>{todayLabel}</p>
       </div>
 
-      <div className="px-4 py-4 md:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="px-4 py-4 md:px-10 md:py-8 max-w-[1440px] w-full mx-auto flex-1">
+        <div className="hidden md:flex items-start justify-between gap-4 mb-8">
+          <div>
+            <p className="text-sm font-medium" style={{ color: "#8FA898" }}>{greeting()}</p>
+            <h1 className="text-3xl font-bold tracking-tight mt-0.5">{data.employeeName}</h1>
+            <p className="text-sm mt-1" style={{ color: "#8FA898" }}>{data.storeName} · {todayLabel}</p>
+          </div>
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="text-sm font-medium px-4 py-2 rounded-xl border"
+              style={{ background: "#fff", color: "#5A7263", borderColor: "#DDE8E1" }}
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {[
             { label: "Today's Collection", value: `${todayKg.toLocaleString("en-IN")} kg`, icon: "📦" },
             { label: "Farmers Served", value: String(todayFarmers), icon: "👨‍🌾" },
             { label: "Pending Quality", value: String(pendingCount), icon: "⏳", alert: pendingCount > 0 },
             { label: "Payments Disbursed", value: formatINR(todayPaid), icon: "💰" },
           ].map((m) => (
-            <Card key={m.label} className="p-4">
+            <Card key={m.label} className="p-4 md:p-5">
               <div className="flex items-start justify-between mb-2">
-                <span className="text-xl">{m.icon}</span>
+                <span className="text-xl md:text-2xl">{m.icon}</span>
                 {"alert" in m && m.alert && (
                   <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: "#FDECEC", color: "#D94F4F" }}>!</span>
                 )}
               </div>
-              <p className="text-2xl font-bold mb-0.5">{m.value}</p>
-              <p className="text-xs" style={{ color: "#8FA898" }}>{m.label}</p>
+              <p className="text-2xl md:text-[28px] font-bold mb-0.5 tracking-tight">{m.value}</p>
+              <p className="text-xs md:text-[13px]" style={{ color: "#8FA898" }}>{m.label}</p>
             </Card>
           ))}
         </div>
-      </div>
 
-      <div className="px-5 mb-5 md:px-8 md:grid md:grid-cols-2 md:gap-6 md:items-start">
-        <div className="mb-5 md:mb-0">
-        <SectionLabel>Quick Actions</SectionLabel>
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { label: "Register Farmer", emoji: "👤", screen: "farmer-register" as Screen },
-            { label: "Log Produce", emoji: "📋", screen: "log-1" as Screen, dark: true },
-            { label: "Quality Check", emoji: "✅", screen: "quality-hub" as Screen },
-            { label: "Generate QR", emoji: "▣", screen: "quality-hub" as Screen },
-          ].map((a) => (
-            <Card key={a.label} onClick={() => go(a.screen)} className="p-4" style={a.dark ? { background: "#1B7A3D", border: "none" } : {}}>
-              <span className="text-2xl block mb-2">{a.emoji}</span>
-              <p className="text-sm font-semibold" style={{ color: a.dark ? "#FFFFFF" : "#1A2E1E" }}>{a.label}</p>
-              {a.dark && <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.55)" }}>Most frequent</p>}
+        <div className="mt-5 md:mt-8 grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-8 items-stretch">
+          <div className="flex flex-col">
+            <SectionLabel>Quick Actions</SectionLabel>
+            <div className="grid grid-cols-2 gap-3 md:gap-4 flex-1">
+              {[
+                { label: "Register Farmer", emoji: "👤", screen: "farmer-register" as Screen },
+                { label: "Log Produce", emoji: "📋", screen: "log-1" as Screen, dark: true },
+                { label: "Quality Check", emoji: "✅", screen: "quality-hub" as Screen },
+                { label: "Generate QR", emoji: "▣", screen: "quality-hub" as Screen },
+              ].map((a) => (
+                <Card key={a.label} onClick={() => go(a.screen)} className="p-4 md:p-5 h-full min-h-[108px]" style={a.dark ? { background: "#1B7A3D", border: "none" } : {}}>
+                  <span className="text-2xl block mb-2">{a.emoji}</span>
+                  <p className="text-sm font-semibold md:text-[15px]" style={{ color: a.dark ? "#FFFFFF" : "#1A2E1E" }}>{a.label}</p>
+                  {a.dark && <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.55)" }}>Most frequent</p>}
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col">
+            <SectionLabel>Today&apos;s Activity</SectionLabel>
+            <Card className="flex-1">
+              {activity.length === 0 ? (
+                <p className="p-6 text-sm text-center" style={{ color: "#8FA898" }}>No activity yet today.</p>
+              ) : (
+                activity.map((item, i) => (
+                  <div key={`${item.at}-${i}`}>
+                    {i > 0 && <Divider />}
+                    <div className="flex items-start gap-3 p-4">
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                        style={{ background: item.type === "produce" || item.type === "quality" ? "#E8F5EE" : "#FEF3E0" }}
+                      >
+                        <span className="text-sm">{item.type === "produce" ? "📦" : item.type === "quality" ? "✓" : "₹"}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium">{item.label}</p>
+                        <p className="text-xs mt-0.5 truncate" style={{ color: "#8FA898" }}>{item.detail}</p>
+                      </div>
+                      <span className="text-xs flex-shrink-0 mt-0.5" style={{ color: "#8FA898" }}>{timeLabel(item.at)}</span>
+                    </div>
+                  </div>
+                ))
+              )}
             </Card>
-          ))}
+          </div>
         </div>
-        </div>
-
-      <div className="px-5 pb-6 md:px-0 md:pb-0">
-        <SectionLabel>Today&apos;s Activity</SectionLabel>
-        <Card>
-          {activity.length === 0 ? (
-            <p className="p-6 text-sm text-center" style={{ color: "#8FA898" }}>No activity yet today.</p>
-          ) : (
-            activity.map((item, i) => (
-              <div key={`${item.at}-${i}`}>
-                {i > 0 && <Divider />}
-                <div className="flex items-start gap-3 p-4">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ background: item.type === "produce" ? "#E8F5EE" : item.type === "quality" ? "#E8F5EE" : "#FEF3E0" }}>
-                    <span className="text-sm">{item.type === "produce" ? "📦" : item.type === "quality" ? "✓" : "₹"}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">{item.label}</p>
-                    <p className="text-xs mt-0.5 truncate" style={{ color: "#8FA898" }}>{item.detail}</p>
-                  </div>
-                  <span className="text-xs flex-shrink-0 mt-0.5" style={{ color: "#8FA898" }}>{timeLabel(item.at)}</span>
-                </div>
-              </div>
-            ))
-          )}
-        </Card>
-      </div>
       </div>
     </div>
   );
@@ -308,7 +332,8 @@ export function FarmerProfileScreen({ farmer, lots, go }: { farmer: EmpFarmer; l
     <div className="flex flex-col h-full">
       <BackHeader title="Farmer Profile" onBack={() => go("farmers")} />
       <div className="flex-1 overflow-y-auto">
-        <div className="px-5 py-5" style={{ background: "#1B7A3D" }}>
+        <div className="px-5 py-5 md:px-10 md:py-8" style={{ background: "#1B7A3D" }}>
+          <div className="max-w-[1440px] mx-auto w-full">
           <div className="flex items-center gap-4">
             <FarmerAvatar name={farmer.name} size="xl" />
             <div>
@@ -316,13 +341,14 @@ export function FarmerProfileScreen({ farmer, lots, go }: { farmer: EmpFarmer; l
               <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.6)" }}>{farmer.village} · {farmer.phone ?? "—"}</p>
             </div>
           </div>
-          <button type="button" onClick={() => go("log-1")} className="w-full mt-5 py-3.5 rounded-2xl text-sm font-semibold" style={{ background: "#fff", color: "#1B7A3D" }}>
+          <button type="button" onClick={() => go("log-1")} className="w-full md:w-auto md:min-w-64 mt-5 py-3.5 px-6 rounded-2xl text-sm font-semibold" style={{ background: "#fff", color: "#1B7A3D" }}>
             + Log Produce for {farmer.name.split(" ")[0]}
           </button>
+          </div>
         </div>
-        <div className="px-5 pt-5 pb-6">
+        <div className="px-5 pt-5 pb-6 md:px-10 md:pt-8 md:max-w-[1440px] md:mx-auto">
           <SectionLabel>Collection Summary</SectionLabel>
-          <div className="grid grid-cols-2 gap-3 mb-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
             {[
               { label: "Total Produce", value: `${farmer.totalKg.toLocaleString("en-IN")} kg` },
               { label: "Deliveries", value: String(farmer.deliveries) },

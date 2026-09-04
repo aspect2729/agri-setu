@@ -45,23 +45,25 @@ function CashList({ entries }: { entries: EmpCash[] }) {
 export function CashHomeScreen({ cashIn, cashOut, entries, go }: { cashIn: number; cashOut: number; entries: EmpCash[]; go: (s: Screen) => void }) {
   return (
     <div className="flex flex-col h-full overflow-y-auto">
-      <div className="px-5 pt-6 pb-6" style={{ background: "#1B7A3D" }}>
-        <h1 className="text-xl font-bold text-white mb-5">Cash Ledger</h1>
+      <div className="px-5 pt-6 pb-6 md:px-10 md:pt-8 md:pb-8" style={{ background: "#1B7A3D" }}>
+        <div className="max-w-[1440px] mx-auto w-full">
+        <h1 className="text-xl md:text-2xl font-bold text-white mb-5">Cash Ledger</h1>
         <p className="text-sm mb-1" style={{ color: "rgba(255,255,255,0.55)" }}>Available Balance</p>
-        <p className="text-4xl font-bold text-white mb-1">{formatINR(cashIn - cashOut)}</p>
-        <div className="grid grid-cols-2 gap-3 mt-5">
-          <div className="p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.08)" }}>
+        <p className="text-4xl md:text-5xl font-bold text-white mb-1">{formatINR(cashIn - cashOut)}</p>
+        <div className="grid grid-cols-2 md:grid-cols-2 max-w-md gap-3 mt-5">
+          <div className="p-3 md:p-4 rounded-xl" style={{ background: "rgba(255,255,255,0.08)" }}>
             <p className="text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>Money In</p>
             <p className="text-base font-bold" style={{ color: "#E8F5EE" }}>{formatINR(cashIn)}</p>
           </div>
-          <div className="p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.08)" }}>
+          <div className="p-3 md:p-4 rounded-xl" style={{ background: "rgba(255,255,255,0.08)" }}>
             <p className="text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>Money Out</p>
             <p className="text-base font-bold" style={{ color: "#FDECEC" }}>{formatINR(cashOut)}</p>
           </div>
         </div>
+        </div>
       </div>
-      <div className="px-5 pt-5 pb-6">
-        <div className="grid grid-cols-2 gap-3 mb-5">
+      <div className="px-5 pt-5 pb-6 md:px-10 md:pt-8 md:max-w-[1440px] md:mx-auto md:w-full">
+        <div className="grid grid-cols-2 md:flex md:gap-3 gap-3 mb-5 max-w-md md:max-w-none">
           <Btn size="md" onClick={() => go("cash-record")}>Record Payment</Btn>
           <Btn size="md" variant="secondary" onClick={() => go("cash-ledger")}>View Ledger</Btn>
         </div>

@@ -179,6 +179,19 @@ body {
   .emp-shell {
     flex-direction: row;
   }
+
+  .emp-canvas {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    min-height: 100%;
+    padding: 32px 40px 48px;
+  }
+}
+
+.emp-canvas {
+  width: 100%;
+  min-height: 100%;
 }
 
 /* Admin console */

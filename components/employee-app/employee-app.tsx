@@ -96,7 +96,7 @@ export function EmployeeApp({ data }: { data: EmployeeAppData }) {
         type: "payment",
       });
     }
-    return items.sort((a, b) => +new Date(b.at) - +new Date(a.at)).slice(0, 6);
+    return items.sort((a, b) => +new Date(b.at) - +new Date(a.at)).slice(0, 12);
   }, [data.lots, data.cash]);
 
   function navTo(tab: NavTab) {
@@ -207,7 +207,7 @@ export function EmployeeApp({ data }: { data: EmployeeAppData }) {
 
   return (
     <div className="emp-shell">
-      <aside className="hidden md:flex flex-col w-64 shrink-0 h-full bg-white" style={{ borderRight: "1px solid #EEF1EE" }}>
+      <aside className="hidden md:flex flex-col w-72 shrink-0 h-full bg-white" style={{ borderRight: "1px solid #EEF1EE" }}>
         <div className="px-6 py-6 shrink-0" style={{ borderBottom: "1px solid #EEF1EE" }}>
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#1B7A3D" }}>
@@ -255,12 +255,16 @@ export function EmployeeApp({ data }: { data: EmployeeAppData }) {
         </div>
       </aside>
 
-      <div className="flex-1 min-w-0 overflow-hidden flex flex-col">
-        <div className="flex-1 overflow-hidden flex flex-col md:px-8 md:py-6">
-          <div className="flex-1 min-h-0 overflow-hidden md:bg-white md:rounded-2xl md:border md:border-[#EEF1EE] md:shadow-sm">
-        {screen === "dashboard" && (
-          <DashboardScreen data={data} todayKg={todayKg} todayFarmers={todayFarmers} pendingCount={pendingLots.length} todayPaid={todayPaid} activity={activity} go={go} />
-        )}
+      <div className="flex-1 min-w-0 overflow-hidden flex flex-col bg-[#F7F8F5]">
+        <div className={`flex-1 min-h-0 ${screen === "dashboard" ? "overflow-hidden" : "overflow-y-auto"}`}>
+          {screen === "dashboard" ? (
+            <DashboardScreen data={data} todayKg={todayKg} todayFarmers={todayFarmers} pendingCount={pendingLots.length} todayPaid={todayPaid} activity={activity} go={go} />
+          ) : screen === "cash-home" ? (
+            <CashHomeScreen cashIn={cashIn} cashOut={cashOut} entries={data.cash} go={go} />
+          ) : screen === "farmer-profile" && selectedFarmer ? (
+            <FarmerProfileScreen farmer={selectedFarmer} lots={data.lots.filter((l) => l.farmerId === selectedFarmer.id)} go={go} />
+          ) : (
+            <div className="emp-canvas">
         {screen === "farmers" && (
           <FarmersScreen farmers={data.farmers} go={go} onSelect={(f) => { setSelectedFarmer(f); patchLog({ farmer: f }); go("farmer-profile"); }} />
         )}
@@ -270,9 +274,6 @@ export function EmployeeApp({ data }: { data: EmployeeAppData }) {
         )}
         {screen === "farmer-success" && newFarmer && (
           <FarmerSuccessScreen name={newFarmer.name} village={newFarmer.village} go={go} />
-        )}
-        {screen === "farmer-profile" && selectedFarmer && (
-          <FarmerProfileScreen farmer={selectedFarmer} lots={data.lots.filter((l) => l.farmerId === selectedFarmer.id)} go={go} />
         )}
         {screen === "log-1" && <LogStep1 farmers={data.farmers} go={go} onPick={(f) => { patchLog({ farmer: f }); go("log-2"); }} />}
         {screen === "log-2" && <LogStep2 log={log} go={go} onPick={(c) => { patchLog({ crop: c }); go("log-3"); }} />}
@@ -303,12 +304,12 @@ export function EmployeeApp({ data }: { data: EmployeeAppData }) {
         {screen === "quality-done" && inspectLot && (
           <QualityDoneScreen lot={inspectLot} grade={log.grade} paid={lastBatch?.paid ?? 0} go={go} />
         )}
-        {screen === "cash-home" && <CashHomeScreen cashIn={cashIn} cashOut={cashOut} entries={data.cash} go={go} />}
         {screen === "cash-ledger" && <CashLedgerScreen entries={data.cash} go={go} />}
         {screen === "cash-record" && <CashRecordScreen form={cashForm} setForm={setCashForm} farmers={data.farmers} go={go} />}
         {screen === "cash-confirm" && <CashConfirmScreen form={cashForm} go={go} pending={pending} error={error} onConfirm={submitCash} />}
         {screen === "cash-done" && <CashDoneScreen form={cashForm} go={go} />}
-          </div>
+            </div>
+          )}
         </div>
         <BottomNav active={navTab} onNav={navTo} />
       </div>

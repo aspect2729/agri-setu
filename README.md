@@ -91,7 +91,7 @@ The seed leaves the story mid-flight: 400 kg of graded tomatoes at Rampur White 
 3. **Employee** (`employee1`) — **Accept** then **Dispatch** FreshMart's onion order.
 4. **Admin** (`admin`) — the 500 kg tomato demand now has 500 kg available at one store. Click **Match supply**.
 5. **Logistics** (`logistics1`) — accept both deliveries, progress to delivered.
-6. **Buyer** (`buyer1`) — paste a batch code into **Verify a package** (the QR journey), then **Confirm receipt** on delivered orders.
+6. **Buyer** (`buyer1`) — scan the crate QR in **Verify** (or type the batch code), then **Confirm receipt** on delivered orders.
 7. **Manager** (`store1`) — show sales, purchases, inventory, farmer records and the cash in/out ledger updating through all of it.
 
 ## Project structure

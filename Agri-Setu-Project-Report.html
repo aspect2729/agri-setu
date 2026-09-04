@@ -353,6 +353,7 @@
           <li>Admin matching and network console</li>
           <li>Logistics dispatch portal (live + demo overlay)</li>
           <li>Public <span class="mono">/trace/AGS-…</span> verification</li>
+          <li>In-app QR scan (buyer Verify, logistics pickup/delivery) with typed batch-ID fallback</li>
           <li>Seeded 3-minute stage story (Rampur tomatoes, FreshMart demand)</li>
         </ul>
       </div>
@@ -361,7 +362,6 @@
         <ul>
           <li>Real UPI / bank payouts (ledger is recorded, not settled)</li>
           <li>Maps SDK / live GPS (haversine only)</li>
-          <li>In-app camera QR scanning (print + type-in code)</li>
           <li>Weather and cost-of-cultivation prediction</li>
           <li>Production-grade per-role RLS (shared marketplace visibility)</li>
           <li>Multi-store split fulfilment of one demand</li>
@@ -379,7 +379,7 @@
       <li>Employee accepts and dispatches FreshMart’s onion order (delivery request appears for logistics).</li>
       <li>Admin matches the 500 kg tomato demand against now-complete Rampur stock; a second delivery is created.</li>
       <li>Logistics accepts both loads and advances them to delivered.</li>
-      <li>Buyer pastes a batch code to verify origin and confirms receipt.</li>
+      <li>Buyer scans the crate QR in-app (or types <span class="mono">AGS-…</span>) to verify origin and confirms receipt.</li>
       <li>Store manager sees inventory, farmer records, and cash in/out update through the chain.</li>
     </ol>
 
@@ -427,7 +427,7 @@
     <h2>11. Future work</h2>
     <ul>
       <li>UPI / Aadhaar-linked farmer payouts and buyer escrow.</li>
-      <li>Camera QR scan in the buyer and logistics apps; GPS breadcrumbs on trips.</li>
+      <li>GPS breadcrumbs on trips.</li>
       <li>Cold-chain flags, crate-level humidity, and spoilage risk on the match score.</li>
       <li>Multi-store pooling when no single centre holds the full demand.</li>
       <li>Tighter RLS: farmers see own lots, buyers see marketplace batches, logistics see assigned trips.</li>
