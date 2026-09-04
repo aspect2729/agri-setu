@@ -1,0 +1,304 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f8f5;
+  --foreground: #1a2e1e;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-serif: var(--font-fraunces), Georgia, serif;
+  --font-mono: var(--font-geist-mono);
+
+  /* Farmer palette — source of truth for every surface */
+  --color-green-primary: #1b7a3d;
+  --color-green-dark: #145c2e;
+  --color-green-light: #e8f5ee;
+  --color-amber: #e9a23b;
+  --color-amber-light: #fef3e0;
+  --color-off-white: #f7f8f5;
+  --color-text-primary: #1a2e1e;
+  --color-text-secondary: #5a7263;
+  --color-text-muted: #8fa898;
+  --color-border: #dde8e1;
+  --color-success: #22a357;
+  --color-error: #d94f4f;
+  --color-error-light: #fdecec;
+  --color-hairline: #eef1ee;
+  --color-soft: #f0f4f1;
+
+  /* Named aliases used by buyer / admin class names */
+  --color-ivory: #f7f8f5;
+  --color-ivory-dark: #f0f4f1;
+  --color-ivory-deeper: #e8f5ee;
+  --color-forest: #1a2e1e;
+  --color-forest-mid: #1b7a3d;
+  --color-forest-light: #22a357;
+  --color-sage: #5a7263;
+  --color-sage-light: #8fa898;
+  --color-sage-pale: #e8f5ee;
+  --color-lime: #22a357;
+  --color-lime-dark: #145c2e;
+  --color-lime-pale: #e8f5ee;
+  --color-amber-pale: #fef3e0;
+  --color-gold: #e9a23b;
+  --color-gold-pale: #fef3e0;
+  --color-border-dark: #c5d4cb;
+  --color-muted-bg: #f0f4f1;
+
+  /* Default Tailwind scales remapped onto the farmer palette */
+  --color-green-50: #f7f8f5;
+  --color-green-100: #e8f5ee;
+  --color-green-200: #dde8e1;
+  --color-green-300: #a8c4b7;
+  --color-green-400: #8fa898;
+  --color-green-500: #22a357;
+  --color-green-600: #1b7a3d;
+  --color-green-700: #1b7a3d;
+  --color-green-800: #145c2e;
+  --color-green-900: #1a2e1e;
+
+  --color-amber-50: #fef3e0;
+  --color-amber-100: #f5d78a;
+  --color-amber-200: #f5d78a;
+  --color-amber-400: #e9a23b;
+  --color-amber-500: #e9a23b;
+  --color-amber-600: #8a6020;
+  --color-amber-700: #8a6020;
+  --color-amber-800: #8a6020;
+  --color-amber-900: #8a6020;
+
+  --color-red-50: #fdecec;
+  --color-red-100: #fdecec;
+  --color-red-200: #f5c4c4;
+  --color-red-500: #d94f4f;
+  --color-red-600: #d94f4f;
+  --color-red-700: #d94f4f;
+  --color-red-800: #b83e3e;
+
+  --color-blue-50: #fef3e0;
+  --color-blue-100: #f5d78a;
+  --color-blue-200: #f5d78a;
+  --color-blue-400: #e9a23b;
+  --color-blue-500: #8a6020;
+  --color-blue-600: #8a6020;
+  --color-blue-700: #8a6020;
+  --color-blue-800: #1a2e1e;
+  --color-blue-900: #1a2e1e;
+
+  --color-gray-50: #f7f8f5;
+  --color-gray-100: #eef1ee;
+  --color-gray-200: #dde8e1;
+  --color-gray-400: #8fa898;
+  --color-gray-500: #5a7263;
+  --color-gray-600: #5a7263;
+  --color-gray-700: #1a2e1e;
+  --color-gray-800: #1a2e1e;
+  --color-gray-900: #1a2e1e;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Farmer desktop canvas — screens use the full main pane, not a phone column. */
+.farmer-page {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 20px 32px;
+}
+
+.farmer-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 16px 20px;
+  background: #fff;
+  border-bottom: 1px solid #eef1ee;
+}
+
+.farmer-footer {
+  flex-shrink: 0;
+  padding: 12px 20px 20px;
+}
+
+.farmer-scroll {
+  flex: 1;
+  overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  .farmer-page {
+    padding: 32px 40px 48px;
+  }
+
+  .farmer-header {
+    padding: 20px 40px;
+  }
+
+  .farmer-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 40px 28px;
+    background: #fff;
+    border-top: 1px solid #eef1ee;
+  }
+
+  .farmer-footer > button {
+    width: auto;
+    min-width: 220px;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+/* Employee portal — same off-white canvas as farmer */
+.emp-shell {
+  height: 100dvh;
+  width: 100%;
+  background: #f7f8f5;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #1a2e1e;
+}
+
+.emp-shell input[type="number"]::-webkit-inner-spin-button,
+.emp-shell input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+@media (min-width: 768px) {
+  .emp-shell {
+    flex-direction: row;
+  }
+}
+
+/* Admin console */
+.admin-shell {
+  height: 100dvh;
+  background: #f7f8f5;
+  color: #1a2e1e;
+  font-family: var(--font-outfit), system-ui, sans-serif;
+}
+
+.admin-shell [style*="Fraunces"] {
+  font-family: var(--font-fraunces), Georgia, serif !important;
+}
+
+.admin-shell [style*="JetBrains"] {
+  font-family: var(--font-jetbrains), ui-monospace, monospace !important;
+}
+
+.admin-shell ::selection {
+  background: #e8f5ee;
+  color: #1b7a3d;
+}
+
+.admin-shell .recharts-tooltip-wrapper {
+  outline: none !important;
+}
+
+@media (min-width: 768px) {
+  body:has(.emp-shell) {
+    background: #f7f8f5;
+  }
+}
+
+/* Buyer console */
+.buyer-shell {
+  min-height: 100dvh;
+  background: #f7f8f5;
+  color: #1a2e1e;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, monospace;
+}
+
+.buyer-shell .font-serif {
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+.buyer-shell .font-mono {
+  font-family: var(--font-dm-mono), ui-monospace, monospace;
+}
+
+body:has(.buyer-shell) {
+  background: #f7f8f5;
+}
+
+/* Logistics partner console */
+.logistics-shell {
+  height: 100dvh;
+  background: #f8fafc;
+  color: #0f172a;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+.logistics-shell .font-mono {
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+body:has(.logistics-shell) {
+  background: #f8fafc;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-up {
+  animation: slide-up 0.25s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+@keyframes score-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+.score-enter {
+  animation: score-pulse 0.6s ease-out;
+}

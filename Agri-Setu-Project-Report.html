@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agri Setu — Project Report</title>
+  <style>
+    :root {
+      --forest: #1a2e1e;
+      --green: #1b7a3d;
+      --sage: #5a7263;
+      --muted: #8fa898;
+      --line: #dde8e1;
+      --paper: #f7f8f5;
+      --amber: #8a6020;
+    }
+    * { box-sizing: border-box; }
+    html { font-size: 11pt; }
+    body {
+      margin: 0;
+      color: var(--forest);
+      background: #fff;
+      font-family: "Palatino Linotype", Palatino, "Times New Roman", Times, serif;
+      line-height: 1.55;
+    }
+    .page {
+      max-width: 210mm;
+      margin: 0 auto;
+      padding: 22mm 20mm 24mm;
+    }
+    header.cover {
+      border-bottom: 3px solid var(--green);
+      padding-bottom: 18px;
+      margin-bottom: 28px;
+    }
+    .kicker {
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 10px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: var(--green);
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
+    h1 {
+      font-size: 28px;
+      line-height: 1.15;
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: var(--sage);
+      margin: 0 0 16px;
+      font-style: italic;
+    }
+    .meta {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      color: var(--sage);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 24px;
+    }
+    h2 {
+      font-size: 16px;
+      margin: 28px 0 10px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--line);
+      color: var(--forest);
+    }
+    h3 {
+      font-size: 13px;
+      margin: 16px 0 6px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: var(--green);
+      letter-spacing: 0.02em;
+    }
+    p { margin: 0 0 10px; }
+    ul, ol { margin: 0 0 12px; padding-left: 1.3em; }
+    li { margin-bottom: 4px; }
+    .lead {
+      font-size: 12.5pt;
+      color: var(--forest);
+    }
+    .quote {
+      border-left: 3px solid var(--green);
+      padding: 8px 14px;
+      margin: 12px 0 16px;
+      background: var(--paper);
+      font-style: italic;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 10px;
+      margin: 8px 0 16px;
+    }
+    th, td {
+      text-align: left;
+      border: 1px solid var(--line);
+      padding: 7px 8px;
+      vertical-align: top;
+    }
+    th {
+      background: var(--paper);
+      font-weight: 650;
+      color: var(--forest);
+    }
+    code, .mono {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+    .flow {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 12px 14px;
+      margin: 10px 0 16px;
+      text-align: center;
+      letter-spacing: 0.01em;
+    }
+    .footer-note {
+      margin-top: 36px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 10px;
+      color: var(--muted);
+    }
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .box {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      font-size: 10.5px;
+    }
+    .box h3 { margin-top: 0; }
+    @media print {
+      body { background: #fff; }
+      .page { padding: 14mm 16mm; max-width: none; }
+      h2 { page-break-after: avoid; }
+      table, .box, .quote, .flow { break-inside: avoid; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <article class="page">
+    <header class="cover">
+      <p class="kicker">Smart India Hackathon — Project Report</p>
+      <h1>Agri Setu</h1>
+      <p class="subtitle">Organizing the agricultural market around the farmer — a White Store network for graded produce, instant payment, and QR-verified bulk trade.</p>
+      <div class="meta">
+        <div>Prototype: full-stack web application</div>
+        <div>Domain: AgriTech / supply-chain</div>
+        <div>Stack: Next.js 16, React 19, TypeScript, Tailwind CSS 4, Supabase</div>
+        <div>Date: 2 September 2026</div>
+      </div>
+    </header>
+
+    <h2>1. Abstract</h2>
+    <p class="lead">
+      Small and marginal farmers in India rarely sell directly to bulk buyers. Supply is fragmented into small lots, quality is unverifiable, payment is delayed, and a chain of intermediaries captures the margin. Agri Setu is a working prototype of a different market structure: farmers bring produce to a nearby White Store collection centre, where it is weighed, quality-graded, and paid for immediately. Each accepted lot becomes a QR-coded batch. Bulk buyers browse ranked supply, order directly, and verify origin on delivery. Logistics partners move graded crates from store to warehouse. An admin console matches open demand against aggregated store inventory.
+    </p>
+    <p>
+      The system is implemented as six role-specific portals (farmer, store employee, store manager, buyer, logistics, admin) plus a public batch-trace page. It is a Smart India Hackathon prototype: real authentication and Postgres data, simulated cash, haversine distance instead of a maps SDK, and typed batch codes instead of live camera scanning.
+    </p>
+
+    <h2>2. Problem statement</h2>
+    <p>
+      India’s horticultural and food-grain markets are structurally unfavourable to the producer. A farmer with 20–50 kg of tomatoes cannot attract a mandi trader’s attention, let alone a processor or supermarket. Typical failure modes:
+    </p>
+    <ul>
+      <li><strong>Fragmented supply.</strong> Small lots never reach a volume that bulk buyers will contract for.</li>
+      <li><strong>Unverifiable quality.</strong> Grade is asserted, not recorded. Buyers discount every load for risk.</li>
+      <li><strong>Delayed payment.</strong> Farmers wait days or weeks; distress sales follow.</li>
+      <li><strong>Opaque prices.</strong> Intermediaries know both ends of the market; the farmer sees only the last offer.</li>
+      <li><strong>No traceability.</strong> A crate in a city warehouse cannot be tied back to a village, a grade, or a weighment.</li>
+    </ul>
+    <p>
+      The conventional response — “put the farmer on an app so they can find buyers” — still makes the weaker party search a distant market. Agri Setu inverts that: the market is organized around the farmer’s supply, at a collection point they can actually reach.
+    </p>
+    <div class="quote">
+      Don’t make the farmer search for the market. Organize the market around the farmer.
+    </div>
+
+    <h2>3. Proposed solution</h2>
+    <p>
+      A <strong>White Store</strong> is a village-level collection centre. It is not a mandi stall and not a full cold warehouse. It is a trusted counter: weigh, grade, pay, label, hold, and dispatch.
+    </p>
+    <div class="flow">
+      Farmer lists produce → nearest White Store suggested → weigh · grade · pay on the spot → QR batch → buyers browse &amp; score → order → logistics pickup → buyer verifies QR → store cash ledger updates
+    </div>
+    <p>
+      Aggregation is the economic core. Farmer A has 20 kg, Farmer B 30 kg, Farmer C 50 kg. Alone, none of them is visible to a bulk buyer. Together at one White Store they are 100 kg of graded, priced, QR-verified supply.
+    </p>
+    <h3>3.1 Design principles</h3>
+    <ul>
+      <li><strong>Pay the farmer first.</strong> Payment is recorded the moment produce is received, not after the buyer settles.</li>
+      <li><strong>Grade at the gate.</strong> A / B / C quality is assigned by store staff and locked onto the batch.</li>
+      <li><strong>One identity per lot.</strong> Every accepted submission gets a unique <span class="mono">AGS-XXXXXX</span> code and a public trace URL.</li>
+      <li><strong>Score, don’t dump a catalogue.</strong> Buyers see a match score from price, quality, quantity, and distance.</li>
+      <li><strong>Single-store fulfilment for a demand.</strong> Admin matching allocates from one White Store so logistics stays simple.</li>
+    </ul>
+
+    <h2>4. Stakeholders and product surfaces</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>Route</th>
+          <th>What they do in the prototype</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Farmer</td>
+          <td class="mono">/farmer</td>
+          <td>English / Kannada UI. List crop and quantity, auto-suggest nearest White Store (haversine), track listings and instant payouts, declare next-season crops.</td>
+        </tr>
+        <tr>
+          <td>Store employee</td>
+          <td class="mono">/employee</td>
+          <td>Counter workflow: register farmers, log walk-in lots, weigh, grade A/B/C, pay immediately, print/view QR batch, accept and dispatch buyer orders, cash in/out.</td>
+        </tr>
+        <tr>
+          <td>Store manager</td>
+          <td class="mono">/store</td>
+          <td>Create the White Store, view sales and purchases, inventory remaining, farmer records, cash ledger, add employees.</td>
+        </tr>
+        <tr>
+          <td>Bulk buyer</td>
+          <td class="mono">/buyer</td>
+          <td>Marketplace ranked by match score, filters (price, grade, quantity, distance), direct order with delivery location, post demand, order tracking, QR verify, clearance-style deals, confirm receipt.</td>
+        </tr>
+        <tr>
+          <td>Logistics</td>
+          <td class="mono">/logistics</td>
+          <td>Dispatch board, available loads, active trips with status stepper (accepted → picked up → in transit → delivered), trip detail (batches, freight, ETA), history, operator account. Live deliveries from the database plus demo trips so the board is never empty on stage.</td>
+        </tr>
+        <tr>
+          <td>Admin</td>
+          <td class="mono">/admin</td>
+          <td>Network dashboard, White Stores, transactions, cash flow, supply–demand matching, orders, inventory, users, reports.</td>
+        </tr>
+        <tr>
+          <td>Public</td>
+          <td class="mono">/trace/[code]</td>
+          <td>Unauthenticated verification page opened by the printed QR: crop, grade, weight, farmer village, store, payout, and downstream order status.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>5. System architecture</h2>
+    <p>
+      Agri Setu is a Next.js App Router application. Role dashboards are server-rendered pages that load the signed-in profile, query Supabase, map rows into view models, and hydrate a client app. Mutations go through server actions in <span class="mono">lib/actions.ts</span>. A request proxy (<span class="mono">proxy.ts</span>) redirects unauthenticated visitors away from protected prefixes.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Layer</th><th>Choice</th><th>Role in the prototype</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>UI</td>
+          <td>React 19, Tailwind CSS 4</td>
+          <td>Role-specific shells (farmer, employee, buyer, logistics, admin) sharing one forest / ivory / sage palette.</td>
+        </tr>
+        <tr>
+          <td>App framework</td>
+          <td>Next.js 16 (App Router, TypeScript)</td>
+          <td>Routes per role, server components for data load, server actions for writes, <span class="mono">force-dynamic</span> so dashboards always read live rows.</td>
+        </tr>
+        <tr>
+          <td>Auth &amp; data</td>
+          <td>Supabase (Postgres + Auth)</td>
+          <td>Email/password demo accounts, profiles keyed to <span class="mono">auth.users</span>, RLS enabled with prototype-grade “authenticated can read/write marketplace tables” policies.</td>
+        </tr>
+        <tr>
+          <td>Traceability</td>
+          <td><span class="mono">qrcode</span> package</td>
+          <td>QR encodes the public trace URL; the trace page uses the service-role client so scanners need not sign in.</td>
+        </tr>
+        <tr>
+          <td>Distance</td>
+          <td>Haversine over stored lat/lng</td>
+          <td>Nearest-store suggestion, buyer match “location” component, logistics kilometres. No maps SDK.</td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>5.1 Data model (core tables)</h3>
+    <table>
+      <thead>
+        <tr><th>Table</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">profiles</td><td>Name, phone, village, role, optional store assignment, coordinates.</td></tr>
+        <tr><td class="mono">white_stores</td><td>Collection centres with operator, address, coordinates.</td></tr>
+        <tr><td class="mono">produce_submissions</td><td>Farmer lots: declared kg, actual weight, grade, price, remaining kg, batch code, paid amount/time.</td></tr>
+        <tr><td class="mono">demands</td><td>Buyer requirements: crop, quantity, offered price, needed-by, location.</td></tr>
+        <tr><td class="mono">orders / order_items</td><td>Direct or matched orders, line items pointing at source batches.</td></tr>
+        <tr><td class="mono">deliveries</td><td>Pickup/drop-off, logistics assignee, status machine from requested to delivered.</td></tr>
+        <tr><td class="mono">cash_entries</td><td>White Store ledger: farmer payouts (out) and buyer settlement (in).</td></tr>
+        <tr><td class="mono">crop_declarations</td><td>Forward-looking acreage / expected harvest for planning.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>6. Key algorithms</h2>
+    <h3>6.1 Buyer match score</h3>
+    <p>
+      Listings are scored relative to the current marketplace, not against a global constant. Each component is scaled 0–100, then combined:
+    </p>
+    <p>
+      <span class="mono">score = 0.35·price + 0.30·quality + 0.15·quantity + 0.20·location</span>
+    </p>
+    <ul>
+      <li><strong>Price</strong> — cheaper lots score higher (min–max normalisation across visible listings).</li>
+      <li><strong>Quality</strong> — grade weights A = 1.00, B = 0.65, C = 0.35.</li>
+      <li><strong>Quantity</strong> — available kg relative to the largest lot on the board.</li>
+      <li><strong>Location</strong> — inverse of haversine distance from the buyer to the White Store.</li>
+    </ul>
+    <p>
+      The buyer UI surfaces the breakdown (price / quality / quantity / location) so the rank is explainable, not a black box.
+    </p>
+    <h3>6.2 Admin supply–demand matching</h3>
+    <p>
+      For an open demand, received batches of that crop with remaining stock are grouped by White Store. The store whose aggregated remaining kg covers the full demand, and whose total is largest, is selected. Allocation is FIFO across that store’s batches (oldest first, partial take from the last). An order, order items, demand status <span class="mono">matched</span>, remaining-kg decrements, and a delivery request are written in one flow. Single-store fulfilment is deliberate: one pickup for logistics.
+    </p>
+    <h3>6.3 Pricing</h3>
+    <p>
+      Farmer payout is the counter price entered at weighing. Buyer-facing price is that payout plus a 15% White Store margin (<span class="mono">salePricePerKg</span>). Demand matching may instead use the buyer’s offered price when present. Confirming receipt writes a cash-in entry of quantity × agreed price to the store ledger.
+    </p>
+    <h3>6.4 Delivery state machine</h3>
+    <p>
+      <span class="mono">requested → accepted → picked_up → in_transit → delivered</span>. Accept binds the logistics profile. Status updates also move the parent order (<span class="mono">pickup_scheduled</span> / <span class="mono">in_transit</span> / <span class="mono">delivered</span>) so the buyer tracking timeline stays consistent.
+    </p>
+
+    <h2>7. Implementation status</h2>
+    <div class="two">
+      <div class="box">
+        <h3>Built and demoable</h3>
+        <ul>
+          <li>Auth with role routing (farmer, store, employee, buyer, logistics, admin)</li>
+          <li>Farmer listing, nearest store, Kannada copy, crop declarations</li>
+          <li>Employee weigh / grade / pay / QR batch</li>
+          <li>Buyer marketplace, scoring, demand, tracking, QR verify</li>
+          <li>Admin matching and network console</li>
+          <li>Logistics dispatch portal (live + demo overlay)</li>
+          <li>Public <span class="mono">/trace/AGS-…</span> verification</li>
+          <li>Seeded 3-minute stage story (Rampur tomatoes, FreshMart demand)</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>Intentionally out of prototype scope</h3>
+        <ul>
+          <li>Real UPI / bank payouts (ledger is recorded, not settled)</li>
+          <li>Maps SDK / live GPS (haversine only)</li>
+          <li>In-app camera QR scanning (print + type-in code)</li>
+          <li>Weather and cost-of-cultivation prediction</li>
+          <li>Production-grade per-role RLS (shared marketplace visibility)</li>
+          <li>Multi-store split fulfilment of one demand</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>8. Demonstration scenario</h2>
+    <p>
+      Seeded accounts (password <span class="mono">agrisetu123</span>) leave the story mid-flight: 400 kg of graded tomatoes at Rampur White Store, Ramesh Kumar’s 100 kg waiting at the counter, a pending 100 kg onion order from FreshMart, and an open 500 kg tomato demand.
+    </p>
+    <ol>
+      <li>Employee weighs Ramesh’s 100 kg, grades A at ₹20/kg — farmer paid ₹2,000, QR batch created.</li>
+      <li>Farmer portal shows the payout and batch code.</li>
+      <li>Employee accepts and dispatches FreshMart’s onion order (delivery request appears for logistics).</li>
+      <li>Admin matches the 500 kg tomato demand against now-complete Rampur stock; a second delivery is created.</li>
+      <li>Logistics accepts both loads and advances them to delivered.</li>
+      <li>Buyer pastes a batch code to verify origin and confirms receipt.</li>
+      <li>Store manager sees inventory, farmer records, and cash in/out update through the chain.</li>
+    </ol>
+
+    <h2>9. Impact</h2>
+    <table>
+      <thead>
+        <tr><th>Dimension</th><th>If the model were adopted</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Farmer income</td>
+          <td>Immediate cash at the gate reduces distress sales. Small lots become sellable through aggregation.</td>
+        </tr>
+        <tr>
+          <td>Buyer trust</td>
+          <td>Grade, weight, and origin are on a scanable record, not a verbal claim. Match scores make trade-offs explicit.</td>
+        </tr>
+        <tr>
+          <td>Local employment</td>
+          <td>White Stores need counter staff, graders, and a logistics partner — village-level work, not only urban platforms.</td>
+        </tr>
+        <tr>
+          <td>Food loss</td>
+          <td>Faster offtake of perishable lots (and a clearance surface for ageing stock) shortens time sitting ungraded.</td>
+        </tr>
+        <tr>
+          <td>Policy fit</td>
+          <td>Aligns with FPO / collection-centre thinking: a physical node plus a digital ledger, rather than an app that bypasses the village entirely.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>10. Novelty</h2>
+    <p>
+      Agri-marketplace apps typically list farms to buyers or run e-NAM-style auction screens. Agri Setu’s distinctive combination is:
+    </p>
+    <ul>
+      <li>a <strong>physical White Store</strong> as the unit of aggregation, not the individual farm listing;</li>
+      <li><strong>instant farmer payment</strong> decoupled from buyer settlement;</li>
+      <li><strong>grade locked to a QR batch</strong> that anyone can verify without an account;</li>
+      <li>an <strong>explainable match score</strong> instead of an unsorted catalogue;</li>
+      <li><strong>closed-loop logistics and cash</strong> so dispatch and the store ledger move with the same order.</li>
+    </ul>
+
+    <h2>11. Future work</h2>
+    <ul>
+      <li>UPI / Aadhaar-linked farmer payouts and buyer escrow.</li>
+      <li>Camera QR scan in the buyer and logistics apps; GPS breadcrumbs on trips.</li>
+      <li>Cold-chain flags, crate-level humidity, and spoilage risk on the match score.</li>
+      <li>Multi-store pooling when no single centre holds the full demand.</li>
+      <li>Tighter RLS: farmers see own lots, buyers see marketplace batches, logistics see assigned trips.</li>
+      <li>Seasonal declarations feeding admin planning and MSP / procurement windows.</li>
+      <li>Offline-capable employee counter (poor connectivity at the gate).</li>
+    </ul>
+
+    <h2>12. Conclusion</h2>
+    <p>
+      Agri Setu is a complete, role-faithful prototype of a farmer-centric market: collection, grading, instant pay, traceable batches, scored buying, matching, logistics, and settlement recording. It does not claim to replace mandis overnight. It shows that if the market is organized at a White Store the farmer can walk to, 20 kg stops being invisible — and a bulk buyer can trust what arrives.
+    </p>
+    <p>
+      The codebase is structured for a live 3-minute demo with seeded accounts. What remains for production is payments, maps, scanning, and hardened authorization — not the product idea itself.
+    </p>
+
+    <p class="footer-note">
+      Agri Setu — Smart India Hackathon prototype. This document describes the software as implemented in the project repository (Next.js App Router, Supabase schema in <span class="mono">supabase/migrations</span>, seed in <span class="mono">scripts/seed.mjs</span>). Open this file in a browser and use Print → Save as PDF if a PDF copy is required.
+    </p>
+  </article>
+</body>
+</html>
