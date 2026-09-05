@@ -234,27 +234,35 @@ export function CropOther({ size = 40, className }: { size?: number; className?:
 }
 
 // Illustration: Farmer → Produce → Store → Payment chain
-export function IllustrationFlow({ className }: { className?: string }) {
+export function IllustrationFlow({
+  className,
+  tone = "default",
+}: {
+  className?: string;
+  tone?: "default" | "onDark";
+}) {
+  const label = tone === "onDark" ? "rgba(255,255,255,0.88)" : "#5A7263";
+  const arrow = tone === "onDark" ? "rgba(255,255,255,0.4)" : "#DDE8E1";
   return (
     <svg viewBox="0 0 320 120" fill="none" className={className}>
       {/* Farmer */}
       <circle cx="32" cy="44" r="12" fill="#E8F5EE" stroke="#1B7A3D" strokeWidth="1.5"/>
       <circle cx="32" cy="38" r="5" fill="#1B7A3D" fillOpacity="0.8"/>
       <path d="M22 56C22 50 27 47 32 47C37 47 42 50 42 56" stroke="#1B7A3D" strokeWidth="1.5" strokeLinecap="round"/>
-      <text x="32" y="70" textAnchor="middle" fontSize="8" fill="#5A7263" fontFamily="Poppins, sans-serif">Farmer</text>
+      <text x="32" y="70" textAnchor="middle" fontSize="8" fill={label} fontFamily="Poppins, sans-serif">Farmer</text>
 
       {/* Arrow */}
-      <path d="M52 50H76" stroke="#DDE8E1" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2"/>
+      <path d="M52 50H76" stroke={arrow} strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2"/>
       <path d="M72 46L78 50L72 54" stroke="#1B7A3D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 
       {/* Crate */}
       <rect x="88" y="36" width="24" height="20" rx="3" fill="#FEF3E0" stroke="#E9A23B" strokeWidth="1.5"/>
       <path d="M88 44H112" stroke="#E9A23B" strokeWidth="1.2"/>
       <path d="M100 36V56" stroke="#E9A23B" strokeWidth="1.2"/>
-      <text x="100" y="70" textAnchor="middle" fontSize="8" fill="#5A7263" fontFamily="Poppins, sans-serif">Produce</text>
+      <text x="100" y="70" textAnchor="middle" fontSize="8" fill={label} fontFamily="Poppins, sans-serif">Produce</text>
 
       {/* Arrow */}
-      <path d="M120 50H144" stroke="#DDE8E1" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2"/>
+      <path d="M120 50H144" stroke={arrow} strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2"/>
       <path d="M140 46L146 50L140 54" stroke="#1B7A3D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 
       {/* Store */}
@@ -262,10 +270,10 @@ export function IllustrationFlow({ className }: { className?: string }) {
       <path d="M156 44H180" stroke="#1B7A3D" strokeWidth="1.2"/>
       <rect x="162" y="44" width="6" height="10" rx="1" fill="#1B7A3D" fillOpacity="0.25"/>
       <path d="M152 42L156 38H180L184 42" stroke="#1B7A3D" strokeWidth="1.5" strokeLinecap="round"/>
-      <text x="168" y="70" textAnchor="middle" fontSize="8" fill="#5A7263" fontFamily="Poppins, sans-serif">White Store</text>
+      <text x="168" y="70" textAnchor="middle" fontSize="8" fill={label} fontFamily="Poppins, sans-serif">White Store</text>
 
       {/* Arrow */}
-      <path d="M188 50H212" stroke="#DDE8E1" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2"/>
+      <path d="M188 50H212" stroke={arrow} strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 2"/>
       <path d="M208 46L214 50L208 54" stroke="#1B7A3D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 
       {/* Payment */}
@@ -273,11 +281,11 @@ export function IllustrationFlow({ className }: { className?: string }) {
       <path d="M224 43H248" stroke="#1B7A3D" strokeWidth="1.2"/>
       <rect x="228" y="46" width="6" height="3" rx="1" fill="#1B7A3D" fillOpacity="0.4"/>
       <circle cx="243" cy="47" r="2.5" stroke="#E9A23B" strokeWidth="1.2"/>
-      <text x="236" y="70" textAnchor="middle" fontSize="8" fill="#5A7263" fontFamily="Poppins, sans-serif">Payment</text>
+      <text x="236" y="70" textAnchor="middle" fontSize="8" fill={label} fontFamily="Poppins, sans-serif">Payment</text>
 
       {/* Instant badge */}
-      <rect x="252" y="80" width="60" height="18" rx="9" fill="#E9A23B" fillOpacity="0.2"/>
-      <text x="282" y="92" textAnchor="middle" fontSize="7.5" fill="#8A6020" fontFamily="Poppins, sans-serif" fontWeight="600">Instant Pay ✓</text>
+      <rect x="252" y="80" width="60" height="18" rx="9" fill="#E9A23B" fillOpacity={tone === "onDark" ? 0.9 : 0.2}/>
+      <text x="282" y="92" textAnchor="middle" fontSize="7.5" fill={tone === "onDark" ? "#1A2E1E" : "#8A6020"} fontFamily="Poppins, sans-serif" fontWeight="600">Instant Pay ✓</text>
     </svg>
   );
 }

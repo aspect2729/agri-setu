@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
+import { LandingHero } from "@/components/landing-hero";
 
 const STEPS = [
   { icon: "🧑‍🌾", title: "Farmer lists produce", text: "The farmer picks the nearest White Store — suggested automatically — and lists what they're bringing." },
@@ -19,11 +20,13 @@ const ROLES = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Nav */}
-      <header className="border-b border-hairline">
+      <LandingHero />
+
+      <div className="relative z-10 bg-white">
+      <header className="border-b border-hairline bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <Link href="/" className="flex items-center">
-            <BrandLogo size={48} priority />
+            <BrandLogo size={48} />
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/login" className="rounded-xl px-4 py-2 text-sm font-semibold text-green-primary transition hover:bg-green-light">
@@ -36,32 +39,20 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero */}
       <section className="bg-gradient-to-b from-green-light/70 to-white">
-        <div className="mx-auto max-w-4xl px-4 py-20 text-center">
-          <div className="mb-6 flex justify-center">
-            <BrandLogo size="lg" priority />
-          </div>
+        <div className="mx-auto max-w-4xl px-4 py-16 text-center">
           <p className="mb-4 inline-block rounded-full bg-green-light px-4 py-1 text-xs font-semibold uppercase tracking-wide text-green-dark">
             Smart India Hackathon
           </p>
-          <h1 className="text-4xl font-extrabold leading-tight text-text-primary sm:text-5xl">
+          <h2 className="text-3xl font-extrabold leading-tight text-text-primary sm:text-4xl">
             Don&apos;t make the farmer search for the market.
             <span className="block text-green-primary">Organize the market around the farmer.</span>
-          </h1>
+          </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-text-secondary">
             Agri Setu is the bridge between farmers, White Store collection centers and bulk
             buyers: instant payment at the counter, quality-graded batches, QR-verified
             traceability, and direct buyer ordering — all in one system.
           </p>
-          <div className="mt-8 flex items-center justify-center gap-3">
-            <Link href="/register" className="rounded-xl bg-green-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-green-dark">
-              Join the network
-            </Link>
-            <Link href="/login" className="rounded-xl border border-border px-6 py-3 text-sm font-semibold text-green-primary transition hover:bg-green-light">
-              View demo
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -152,6 +143,7 @@ export default function LandingPage() {
       <footer className="border-t border-hairline py-6 text-center text-xs text-text-muted">
         Agri Setu — Smart India Hackathon prototype
       </footer>
+      </div>
     </div>
   );
 }

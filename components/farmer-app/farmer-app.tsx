@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { addProduce, declareCrop, loadFarmWeather, signOut } from "@/lib/actions";
@@ -13,6 +13,7 @@ import {
   IconHome, IconBasket, IconUser, IconStore, IconPayment, IconCalendar,
   IconCheck, IconChevronRight, IconArrowLeft,
   IconLogout, IconHistory, IconGlobe, IconQuality, IconSold, IconPlus,
+  IconCamera,
   CropTomato, CropOnion, CropPotato, CropRice, CropWheat,
   CropChilli, CropBrinjal, CropOther, IllustrationCrate, IllustrationSuccess,
 } from "./icons";
@@ -64,7 +65,7 @@ export type FarmerAppData = {
 };
 
 type Screen =
-  | "home" | "list-crop" | "list-qty" | "list-store" | "list-success"
+  | "home" | "list-crop" | "list-qty" | "list-store" | "list-confirm" | "list-success"
   | "my-produce" | "track" | "declare" | "declare-done" | "profile" | "weather" | "prices";
 
 // ── Crops ──────────────────────────────────────────────────────────────────
@@ -290,6 +291,9 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
   const [expectedPrice, setExpectedPrice] = useState("");
   const [storeId, setStoreId] = useState<string | null>(data.stores[0]?.id ?? null);
   const [storePickerReturn, setStorePickerReturn] = useState<Screen>("list-qty");
+  const [listPhotoUrl, setListPhotoUrl] = useState<string | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   // Declare wizard state
   const [declCropId, setDeclCropId] = useState<string | null>(null);
@@ -343,6 +347,23 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
     return opt?.en ?? "";
   };
 
+  function onListPhoto(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setListPhotoUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
+  }
+
+  function clearListPhoto() {
+    setListPhotoUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+  }
+
   function submitListing() {
     const crop = cropName(cropId, customCrop);
     if (!crop || !selectedStore) return;
@@ -358,6 +379,10 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
         setError(res.error);
       } else {
         setLastListed({ crop, qty, store: selectedStore.name });
+        if (listPhotoUrl) {
+          URL.revokeObjectURL(listPhotoUrl);
+          setListPhotoUrl(null);
+        }
         router.refresh();
         setScreen("list-success");
       }
@@ -396,7 +421,7 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
 
   const isActive = (id: Screen) => {
     if (id === "home") return ["home", "declare", "declare-done", "weather", "prices"].includes(screen);
-    if (id === "list-crop") return ["list-crop", "list-qty", "list-store", "list-success"].includes(screen);
+    if (id === "list-crop") return ["list-crop", "list-qty", "list-store", "list-confirm", "list-success"].includes(screen);
     if (id === "my-produce") return ["my-produce", "track"].includes(screen);
     return screen === id;
   };
@@ -681,6 +706,66 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
           />
         </div>
 
+        <div className="rounded-2xl p-5" style={{ background: "#fff", boxShadow: "0 1px 6px rgba(0,0,0,0.05)" }}>
+          <div className="flex items-start gap-3 mb-4">
+            <IconCamera size={20} color="#5A7263" />
+            <div>
+              <p className="text-sm font-medium" style={{ color: "#1A2E1E" }}>{t("addPhoto", lang)}</p>
+              <p className="text-xs" style={{ color: "#8FA898" }}>{t("addPhotoSub", lang)}</p>
+            </div>
+          </div>
+          <input
+            ref={cameraInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={onListPhoto}
+          />
+          <input
+            ref={galleryInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={onListPhoto}
+          />
+          {listPhotoUrl ? (
+            <div className="relative">
+              {/* Preview only — not uploaded. Helps quality review in the demo UI. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={listPhotoUrl} alt="" className="h-36 w-full rounded-xl object-cover" />
+              <button
+                type="button"
+                onClick={clearListPhoto}
+                className="absolute right-2 top-2 rounded-full px-3 py-1 text-xs font-medium"
+                style={{ background: "rgba(26,46,30,0.75)", color: "#fff" }}
+              >
+                {t("removePhoto", lang)}
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => cameraInputRef.current?.click()}
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2"
+                style={{ background: "#E8F5EE", color: "#1B7A3D" }}
+              >
+                <IconCamera size={16} color="#1B7A3D" />
+                {t("takePhoto", lang)}
+              </button>
+              <button
+                type="button"
+                onClick={() => galleryInputRef.current?.click()}
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium"
+                style={{ background: "#F7F8F5", color: "#5A7263" }}
+              >
+                {t("chooseGallery", lang)}
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Drop-off store */}
         {selectedStore && (
           <div className="rounded-2xl p-4 flex items-center gap-3" style={{ background: "#fff", border: "1.5px solid #EEF1EE" }}>
@@ -725,9 +810,9 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
       <div className="farmer-footer">
         <p className="hidden md:block mr-auto self-center text-sm" style={{ color: "#8FA898" }}>{t("trackAnytime", lang)}</p>
         <PrimaryButton
-          label={pending ? "…" : t("confirmList", lang)}
-          onClick={submitListing}
-          disabled={pending || !selectedStore}
+          label={t("next", lang)}
+          onClick={() => setScreen("list-confirm")}
+          disabled={!selectedStore}
         />
       </div>
     </div>
@@ -806,6 +891,83 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
     </div>
   );
 
+  const selectedCrop = CROP_OPTIONS.find((c) => c.id === cropId);
+  const CropIconConfirm = selectedCrop?.Icon ?? CropOther;
+  const confirmCropLabel =
+    cropId === "other"
+      ? customCrop.trim()
+      : lang === "kn"
+        ? (selectedCrop?.kn ?? "")
+        : (selectedCrop?.en ?? "");
+
+  const listConfirm = (
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <ScreenHeader title={t("listProduce", lang)} onBack={() => setScreen("list-qty")} lang={lang} onLangToggle={toggleLang} />
+      <ProgressSteps step={2} lang={lang} />
+
+      <div className="farmer-scroll">
+        <div className="farmer-page space-y-4 max-w-xl">
+          <div className="rounded-2xl overflow-hidden" style={{ background: "#fff", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+            {([
+              { label: t("cropLabel", lang), value: confirmCropLabel, Icon: CropIconConfirm },
+              { label: t("quantityLabel", lang), value: `${qty} kg` },
+              { label: t("dropOffAt", lang), value: selectedStore?.name ?? "—" },
+              { label: t("estPrice", lang), value: expectedPrice ? `₹${expectedPrice} / kg` : t("notSet", lang) },
+            ] as { label: string; value: string; Icon?: CropIconComponent }[]).map((row, i) => (
+              <div
+                key={row.label}
+                className="flex items-center justify-between px-4 py-3.5"
+                style={{ borderTop: i > 0 ? "1px solid #F7F8F5" : "none" }}
+              >
+                <span className="text-sm" style={{ color: "#8FA898" }}>{row.label}</span>
+                <div className="flex items-center gap-2">
+                  {row.Icon ? <row.Icon size={20} /> : null}
+                  <span className="text-sm font-semibold" style={{ color: "#1A2E1E" }}>{row.value}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {listPhotoUrl && (
+            <div className="rounded-2xl overflow-hidden" style={{ background: "#fff", boxShadow: "0 1px 6px rgba(0,0,0,0.05)" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={listPhotoUrl} alt="" className="h-40 w-full object-cover" />
+            </div>
+          )}
+
+          {selectedStore && (
+            <button
+              type="button"
+              onClick={() => { setStorePickerReturn("list-confirm"); setScreen("list-store"); }}
+              className="text-xs font-medium px-3 py-1.5 rounded-full"
+              style={{ background: "#E8F5EE", color: "#1B7A3D" }}
+            >
+              {t("change", lang)} {t("storeLabel", lang).toLowerCase()}
+            </button>
+          )}
+
+          <div className="rounded-2xl p-4 flex items-start gap-3" style={{ background: "#E8F5EE" }}>
+            <IconPayment size={20} color="#1B7A3D" />
+            <p className="text-sm" style={{ color: "#1B7A3D" }}>{t("confirmPayNote", lang)}</p>
+          </div>
+
+          {error && (
+            <p className="rounded-2xl px-4 py-3 text-sm" style={{ background: "#FDECEC", color: "#D94F4F" }}>{error}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="farmer-footer">
+        <p className="hidden md:block mr-auto self-center text-sm" style={{ color: "#8FA898" }}>{t("trackAnytime", lang)}</p>
+        <PrimaryButton
+          label={pending ? "…" : t("confirmList", lang)}
+          onClick={submitListing}
+          disabled={pending || !selectedStore}
+        />
+      </div>
+    </div>
+  );
+
   const listSuccess = (
     <div className="farmer-scroll flex flex-col items-center justify-center px-6 text-center gap-6 py-12 md:py-20">
       <IllustrationSuccess size={96} />
@@ -828,8 +990,8 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
         </div>
       )}
       <div className="w-full max-w-md flex flex-col md:flex-row gap-2 md:justify-center">
-        <PrimaryButton label={t("myProduce", lang)} onClick={() => { setCropId(null); setCustomCrop(""); setQty(20); setExpectedPrice(""); goTab("my-produce"); }} />
-        <SecondaryButton label={t("backHome", lang)} onClick={() => { setCropId(null); setCustomCrop(""); setQty(20); setExpectedPrice(""); goTab("home"); }} />
+        <PrimaryButton label={t("myProduce", lang)} onClick={() => { setCropId(null); setCustomCrop(""); setQty(20); setExpectedPrice(""); clearListPhoto(); goTab("my-produce"); }} />
+        <SecondaryButton label={t("backHome", lang)} onClick={() => { setCropId(null); setCustomCrop(""); setQty(20); setExpectedPrice(""); clearListPhoto(); goTab("home"); }} />
       </div>
     </div>
   );
@@ -1242,6 +1404,7 @@ export function FarmerApp({ data }: { data: FarmerAppData }) {
   if (screen === "list-crop") screenNode = listCrop;
   else if (screen === "list-qty") screenNode = listQty;
   else if (screen === "list-store") screenNode = listStore;
+  else if (screen === "list-confirm") screenNode = listConfirm;
   else if (screen === "list-success") screenNode = listSuccess;
   else if (screen === "my-produce") screenNode = myProduce;
   else if (screen === "track") screenNode = track ?? myProduce;

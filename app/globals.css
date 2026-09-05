@@ -315,3 +315,12 @@ body:has(.logistics-shell) {
 .score-enter {
   animation: score-pulse 0.6s ease-out;
 }
+
+.auth-frost-input:-webkit-autofill,
+.auth-frost-input:-webkit-autofill:hover,
+.auth-frost-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff;
+  caret-color: #fff;
+  transition: background-color 9999s ease-out;
+  box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.08) inset;
+}

@@ -4,8 +4,14 @@ import Link from "next/link";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { ROLE_HOME, type UserRole } from "@/lib/types";
-import { inputClass } from "@/components/action-form";
-import { BrandLogo } from "@/components/brand-logo";
+import {
+  AuthPhotoShell,
+  frostCtaStyle,
+  frostField,
+  frostInputClass,
+} from "@/components/auth-photo-shell";
+import { IconShield } from "@/components/farmer-app/icons";
+import type { Lang } from "@/components/farmer-app/translations";
 
 function authMessage(err: unknown): string {
   const message =
@@ -27,9 +33,29 @@ function authMessage(err: unknown): string {
   return message;
 }
 
+const COPY = {
+  welcomeTo: { en: "Welcome to", kn: "ಸ್ವಾಗತ" },
+  welcomeBack: { en: "Welcome back", kn: "ಮತ್ತೆ ಸ್ವಾಗತ" },
+  sub: {
+    en: "Sign in with your email to continue.",
+    kn: "ಮುಂದುವರಿಯಲು ನಿಮ್ಮ ಇಮೇಲ್ ಬಳಸಿ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  },
+  email: { en: "Email", kn: "ಇಮೇಲ್" },
+  password: { en: "Password", kn: "ಪಾಸ್‌ವರ್ಡ್" },
+  signIn: { en: "Sign in", kn: "ಸೈನ್ ಇನ್" },
+  signingIn: { en: "Signing in…", kn: "ಸೈನ್ ಇನ್ ಆಗುತ್ತಿದೆ…" },
+  shield: {
+    en: "Demo accounts use email and password — not OTP — so the jury can sign in instantly.",
+    kn: "ಡೆಮೋ ಖಾತೆಗಳು ಇಮೇಲ್ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ಬಳಸುತ್ತವೆ — OTP ಅಲ್ಲ — ತಕ್ಷಣ ಸೈನ್ ಇನ್ ಮಾಡಲು.",
+  },
+  newHere: { en: "New to Agri Setu?", kn: "ಅಗ್ರಿ ಸೇತುಗೆ ಹೊಸದೇ?" },
+  create: { en: "Create an account", kn: "ಖಾತೆ ತೆರೆಯಿರಿ" },
+};
+
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [lang, setLang] = useState<Lang>("en");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -66,59 +92,87 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-off-white px-4">
-      <div className="w-full max-w-md">
-        <Link href="/" className="mb-6 flex justify-center">
-          <BrandLogo size="lg" priority />
-        </Link>
+    <AuthPhotoShell
+      lang={lang}
+      onLangToggle={() => setLang((l) => (l === "en" ? "kn" : "en"))}
+      backHref="/"
+      pin="fixed"
+    >
+      <div>
+        <p className="mb-1 text-sm font-medium" style={{ color: "rgba(255,255,255,0.7)" }}>
+          {COPY.welcomeTo[lang]}
+        </p>
+        <h1 className="text-3xl font-bold leading-tight text-white">{COPY.welcomeBack[lang]}</h1>
+        <p className="mt-1.5 text-sm" style={{ color: "rgba(255,255,255,0.65)" }}>
+          {COPY.sub[lang]}
+        </p>
+      </div>
 
-        <div className="rounded-2xl border border-hairline bg-white p-6 shadow-sm">
-          <h1 className="mb-1 text-xl font-bold text-text-primary">Welcome back</h1>
-          <p className="mb-5 text-sm text-text-muted">
-            Sign in to your Agri Setu account.
-          </p>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <label className="block">
+          <span className="mb-2 block text-xs font-medium" style={{ color: "rgba(255,255,255,0.7)" }}>
+            {COPY.email[lang]}
+          </span>
+          <input
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder="farmer1@agrisetu.demo"
+            className={frostInputClass}
+            style={frostField}
+          />
+        </label>
+        <label className="block">
+          <span className="mb-2 block text-xs font-medium" style={{ color: "rgba(255,255,255,0.7)" }}>
+            {COPY.password[lang]}
+          </span>
+          <input
+            name="password"
+            type="password"
+            required
+            autoComplete="current-password"
+            placeholder="••••••••"
+            className={frostInputClass}
+            style={frostField}
+          />
+        </label>
 
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <input
-              name="email"
-              type="email"
-              required
-              autoComplete="email"
-              placeholder="Email"
-              className={inputClass}
-            />
-            <input
-              name="password"
-              type="password"
-              required
-              autoComplete="current-password"
-              placeholder="Password"
-              className={inputClass}
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-xl bg-green-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-dark disabled:opacity-50"
-            >
-              {loading ? "Signing in…" : "Sign in"}
-            </button>
-            {error && (
-              <p className="rounded-lg bg-error-light px-3 py-2 text-sm text-error">{error}</p>
-            )}
-          </form>
-
-          <p className="mt-4 text-center text-sm text-text-muted">
-            New to Agri Setu?{" "}
-            <Link href="/register" className="font-semibold text-green-primary hover:underline">
-              Create an account
-            </Link>
-          </p>
-          <p className="mt-3 text-center text-xs text-text-muted">
-            Demo: <span className="font-mono">employee1@agrisetu.demo</span> /{" "}
-            <span className="font-mono">agrisetu123</span>
+        <div
+          className="flex items-start gap-2.5 rounded-2xl p-3.5"
+          style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(12px)" }}
+        >
+          <IconShield size={18} color="rgba(255,255,255,0.8)" />
+          <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>
+            {COPY.shield[lang]}
           </p>
         </div>
-      </div>
-    </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-2xl py-4 text-base font-semibold transition-all active:scale-[0.98] disabled:opacity-50"
+          style={frostCtaStyle}
+        >
+          {loading ? COPY.signingIn[lang] : COPY.signIn[lang]}
+        </button>
+        {error && (
+          <p className="rounded-2xl px-4 py-3 text-sm" style={{ background: "rgba(217,79,79,0.25)", color: "#fecaca" }}>
+            {error}
+          </p>
+        )}
+      </form>
+
+      <p className="text-center text-sm" style={{ color: "rgba(255,255,255,0.65)" }}>
+        {COPY.newHere[lang]}{" "}
+        <Link href="/register" className="font-semibold text-white underline-offset-2 hover:underline">
+          {COPY.create[lang]}
+        </Link>
+      </p>
+      <p className="text-center text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+        Demo: <span className="font-mono">employee1@agrisetu.demo</span> /{" "}
+        <span className="font-mono">agrisetu123</span>
+      </p>
+    </AuthPhotoShell>
   );
 }
