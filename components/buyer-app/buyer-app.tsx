@@ -1,18 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { signOut } from "@/lib/actions";
 import { useBuyerData } from "./data-context";
 import type { AppNav, NavView } from "./nav";
 import Marketplace from "./views/Marketplace";
-import ProduceDetail from "./views/ProduceDetail";
-import PostDemand from "./views/PostDemand";
-import MyOrders from "./views/MyOrders";
-import OrderTracking from "./views/OrderTracking";
-import QRVerify from "./views/QRVerify";
-import ClearanceDeals from "./views/ClearanceDeals";
-import Account from "./views/Account";
 import { BrandLogo } from "@/components/brand-logo";
+
+function ViewFallback() {
+  return <div className="p-8 text-sm text-sage">Loading…</div>;
+}
+
+const ProduceDetail = dynamic(() => import("./views/ProduceDetail"), { loading: ViewFallback });
+const PostDemand = dynamic(() => import("./views/PostDemand"), { loading: ViewFallback });
+const MyOrders = dynamic(() => import("./views/MyOrders"), { loading: ViewFallback });
+const OrderTracking = dynamic(() => import("./views/OrderTracking"), { loading: ViewFallback });
+const QRVerify = dynamic(() => import("./views/QRVerify"), { loading: ViewFallback });
+const ClearanceDeals = dynamic(() => import("./views/ClearanceDeals"), { loading: ViewFallback });
+const Account = dynamic(() => import("./views/Account"), { loading: ViewFallback });
 
 const NAV_ITEMS: { id: NavView; label: string; icon: React.ReactNode; activeIcon: React.ReactNode }[] = [
   {

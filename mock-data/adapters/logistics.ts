@@ -17,6 +17,7 @@ import {
   readProducts,
   readShipments,
 } from "../services";
+import { runtimeGeneration } from "../runtime";
 import { formatChartDay, formatDay, relativeTime } from "../util";
 import type { Order, Shipment } from "../types";
 
@@ -50,9 +51,14 @@ function handling(crop: string) {
   return "Keep cool and dry";
 }
 
-function toTrip(shipment: Shipment, order: Order): Trip {
-  const product = readProducts().find((p) => p.id === order.productId);
-  const buyer = readBuyers().find((b) => b.id === order.buyerId);
+function toTrip(
+  shipment: Shipment,
+  order: Order,
+  productById: Map<string, ReturnType<typeof readProducts>[number]>,
+  buyerById: Map<string, ReturnType<typeof readBuyers>[number]>,
+): Trip {
+  const product = productById.get(order.productId);
+  const buyer = buyerById.get(order.buyerId);
   const crop = product?.cropName ?? "Produce";
   const grade = product ? `Grade ${product.qualityGrade}` : "Grade A";
   const pickupName = shipment.pickupLocation;
@@ -94,20 +100,29 @@ function toTrip(shipment: Shipment, order: Order): Trip {
   };
 }
 
+let tripsCache: Trip[] | null = null;
+let tripsGen = -1;
+
 export function demoTrips(): Trip[] {
+  const gen = runtimeGeneration();
+  if (tripsCache && tripsGen === gen) return tripsCache;
   const orderById = new Map(readOrders().map((o) => [o.id, o]));
+  const productById = new Map(readProducts().map((p) => [p.id, p]));
+  const buyerById = new Map(readBuyers().map((b) => [b.id, b]));
   const trips = readShipments()
     .map((s) => {
       const order = orderById.get(s.orderId);
-      return order ? toTrip(s, order) : null;
+      return order ? toTrip(s, order, productById, buyerById) : null;
     })
     .filter((t): t is Trip => Boolean(t));
   const seen = new Set<string>();
-  return trips.filter((t) => {
+  tripsCache = trips.filter((t) => {
     if (seen.has(t.id)) return false;
     seen.add(t.id);
     return true;
   });
+  tripsGen = gen;
+  return tripsCache;
 }
 
 export function logisticsVehicles(): Vehicle[] {
@@ -147,14 +162,15 @@ export function logisticsTripHistory(): TripHistoryItem[] {
     status: t.status,
     earnings: t.earnings,
   }));
+  const productById = new Map(readProducts().map((p) => [p.id, p]));
+  const buyerById = new Map(readBuyers().map((b) => [b.id, b]));
   for (const order of cancelledOrders) {
     if (order.tripCode && items.some((i) => i.id === order.tripCode)) continue;
-    const product = readProducts().find((p) => p.id === order.productId);
-    const buyer = readBuyers().find((b) => b.id === order.buyerId);
+    const buyer = buyerById.get(order.buyerId);
     items.push({
       id: order.tripCode ?? `AS-TRP-C${order.id.slice(-2)}`,
       date: formatDay(order.orderDate),
-      crop: product?.cropName ?? "Produce",
+      crop: productById.get(order.productId)?.cropName ?? "Produce",
       quantity: `${order.quantity.toLocaleString("en-IN")} kg`,
       route: `Store → ${buyer?.name ?? "Buyer"}`,
       pickup: "White Store",
@@ -216,6 +232,11 @@ function asLogType(type: string): LogisticsNotification["type"] {
 }
 
 export function logisticsNotifications(): LogisticsNotification[] {
+  const shipById = new Map<string, string>();
+  for (const s of readShipments()) {
+    shipById.set(s.shipmentId, s.tripCode);
+    shipById.set(s.orderId, s.tripCode);
+  }
   return readNotifications()
     .filter((n) =>
       ["new_order", "shipment_assigned", "shipment_picked_up", "shipment_in_transit", "delivery_completed", "payment_success", "payment_failed"].includes(n.type),
@@ -227,7 +248,7 @@ export function logisticsNotifications(): LogisticsNotification[] {
       time: relativeTime(n.timestamp),
       read: n.read,
       type: asLogType(n.type),
-      tripId: readShipments().find((s) => s.shipmentId === n.relatedEntityId || s.orderId === n.relatedEntityId)?.tripCode,
+      tripId: shipById.get(n.relatedEntityId),
     }));
 }
 

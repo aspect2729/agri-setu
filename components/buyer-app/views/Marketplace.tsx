@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, memo } from "react"
 import MatchScore from "../MatchScore"
 import type { AppNav } from "../nav"
 import { useBuyerData } from "../data-context"
@@ -32,23 +32,19 @@ function FreshnessBar({ freshness, daysAgo }: { freshness: string; daysAgo: numb
   )
 }
 
-function ProduceCard({ listing, onSelect }: { listing: ProduceListing; onSelect: () => void }) {
-  const [hovered, setHovered] = useState(false)
+const ProduceCard = memo(function ProduceCard({ listing, onSelect }: { listing: ProduceListing; onSelect: () => void }) {
   return (
     <div
-      className="bg-white rounded-xl border border-border overflow-hidden cursor-pointer group transition-all duration-200"
-      style={{
-        boxShadow: hovered ? "0 8px 24px rgba(26,46,33,0.1)" : "0 1px 4px rgba(26,46,33,0.06)",
-        transform: hovered ? "translateY(-2px)" : "translateY(0)",
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className="bg-white rounded-xl border border-border overflow-hidden cursor-pointer group transition-all duration-200 hover:-translate-y-0.5"
+      style={{ boxShadow: "0 1px 4px rgba(26,46,33,0.06)" }}
       onClick={onSelect}
     >
       <div className="relative h-40 md:h-44 bg-ivory-dark overflow-hidden">
         <img
           src={listing.image}
           alt={listing.crop}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-forest/20 to-transparent" />
@@ -102,7 +98,7 @@ function ProduceCard({ listing, onSelect }: { listing: ProduceListing; onSelect:
       </div>
     </div>
   )
-}
+})
 
 function KpiCard({ label, value, sub, accent }: { label: string; value: string | number; sub?: string; accent?: string }) {
   return (
@@ -512,7 +508,7 @@ function ListCard({ listing, onSelect }: { listing: ProduceListing; onSelect: ()
       onClick={onSelect}
       className="bg-white rounded-xl border border-border p-4 flex gap-4 cursor-pointer hover:border-forest-mid/30 hover:shadow-sm transition-all"
     >
-      <img src={listing.image} alt={listing.crop} className="w-20 h-16 md:w-24 md:h-20 object-cover rounded-lg shrink-0 bg-ivory-dark" />
+      <img src={listing.image} alt={listing.crop} loading="lazy" decoding="async" className="w-20 h-16 md:w-24 md:h-20 object-cover rounded-lg shrink-0 bg-ivory-dark" />
       <div className="flex-1 min-w-0 flex items-center gap-3 md:gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-0.5">

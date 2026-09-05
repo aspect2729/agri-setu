@@ -1,4 +1,4 @@
-import { DATASET, FLEET } from "./seed";
+import { DATASET, FLEET, MARKET_BY_CROP } from "./seed";
 import {
   addMinutes,
   err,
@@ -18,6 +18,7 @@ import {
   mergeShipments,
   patchPayment,
   queueNotification,
+  runtimeGeneration,
 } from "./runtime";
 import type {
   AppNotification,
@@ -85,7 +86,6 @@ export async function getFarmers(): Promise<MockResult<Farmer[]>> {
 }
 
 export async function getFarmer(id: string): Promise<MockResult<Farmer>> {
-  await sleep(200);
   const row = farmers().find((f) => f.id === id);
   if (!row) return err("Farmer not found");
   return ok(row);
@@ -114,7 +114,6 @@ export async function getOrders(filter?: { buyerId?: string; farmerId?: string; 
 }
 
 export async function getOrder(id: string): Promise<MockResult<Order>> {
-  await sleep(220);
   const row = orders().find((o) => o.id === id);
   if (!row) return err("Order not found");
   return ok(row);
@@ -128,7 +127,6 @@ export async function getPayments(orderId?: string) {
 }
 
 export async function getPaymentByOrder(orderId: string): Promise<MockResult<Payment>> {
-  await sleep(200);
   const row = payments().find((p) => p.orderId === orderId);
   if (!row) return err("Payment not found");
   return ok(row);
@@ -180,12 +178,11 @@ export async function processPayment(orderId: string): Promise<MockResult<Paymen
 }
 
 export async function getShipments() {
-  return withSim(() => shipments(), { failRate: 0.08 });
+  return withSim(() => shipments(), { failRate: 0.04, min: 80, max: 180 });
 }
 
 export async function getShipmentStatus(id: string): Promise<MockResult<Shipment>> {
-  await sleep(220);
-  if (Math.random() < 0.08) return err("Simulated logistics API timeout.");
+  if (Math.random() < 0.04) return err("Simulated logistics API timeout.");
   const row = shipments().find((s) => s.shipmentId === id || s.tripCode === id || s.orderId === id);
   if (!row) return err("Shipment not found");
   return ok(row);
@@ -249,7 +246,6 @@ export async function createShipment(input: {
 }
 
 export async function getVehicleLocation(shipmentId: string): Promise<MockResult<VehicleLocation>> {
-  await sleep(120);
   const shipment = shipments().find((s) => s.shipmentId === shipmentId || s.tripCode === shipmentId);
   if (!shipment) return err("Shipment not found");
   const from = { lat: shipment.pickupLat, lng: shipment.pickupLng };
@@ -278,22 +274,23 @@ export async function getVehicleLocation(shipmentId: string): Promise<MockResult
 }
 
 export async function getMarketPrices(cropName?: string): Promise<MockResult<MarketPrice[]>> {
-  return withSim(() => {
-    const hour = new Date().getHours();
-    return DATASET.marketPrices
-      .filter((row) => !cropName || row.crop.toLowerCase() === cropName.toLowerCase())
-      .map((row) => {
-        const rng = mulberry32(hashSeed(`${row.crop}|${row.market}|${row.date}|${hour}`));
-        const jitter = Math.round((rng() - 0.5) * 40);
-        const modalPrice = Math.max(100, row.modalPrice + jitter);
-        return {
-          ...row,
-          modalPrice,
-          minPrice: Math.min(row.minPrice, modalPrice - 40),
-          maxPrice: Math.max(row.maxPrice, modalPrice + 40),
-        };
-      });
+  const hour = new Date().getHours();
+  const source = cropName
+    ? MARKET_BY_CROP.get(cropName) ??
+      DATASET.marketPrices.filter((row) => row.crop.toLowerCase() === cropName.toLowerCase())
+    : DATASET.marketPrices;
+  const data = source.map((row) => {
+    const rng = mulberry32(hashSeed(`${row.crop}|${row.market}|${row.date}|${hour}`));
+    const jitter = Math.round((rng() - 0.5) * 40);
+    const modalPrice = Math.max(100, row.modalPrice + jitter);
+    return {
+      ...row,
+      modalPrice,
+      minPrice: Math.min(row.minPrice, modalPrice - 40),
+      maxPrice: Math.max(row.maxPrice, modalPrice + 40),
+    };
   });
+  return ok(data);
 }
 
 export async function getVerifications() {
@@ -301,7 +298,6 @@ export async function getVerifications() {
 }
 
 export async function getFarmerVerification(farmerId: string) {
-  await sleep(180);
   const row = DATASET.verifications.find((v) => v.farmerId === farmerId);
   if (!row) return err("Verification record not found");
   return ok(row);
@@ -317,7 +313,6 @@ export async function getNotifications(userId?: string) {
 export async function sendNotification(
   input: Omit<AppNotification, "id" | "timestamp" | "read"> & { timestamp?: string },
 ) {
-  await sleep(150);
   queueNotification({
     ...input,
     timestamp: input.timestamp ?? new Date().toISOString(),
@@ -326,14 +321,20 @@ export async function sendNotification(
   return ok({ queued: true as const });
 }
 
+let analyticsCache: MarketplaceAnalytics | null = null;
+let analyticsGen = -1;
+
 export function computeAnalytics(): MarketplaceAnalytics {
+  const gen = runtimeGeneration();
+  if (analyticsCache && analyticsGen === gen) return analyticsCache;
   const allOrders = orders();
+  const productById = new Map(products().map((p) => [p.id, p]));
   const delivered = allOrders.filter((o) => o.status === "delivered");
   const cancelled = allOrders.filter((o) => o.status === "cancelled");
   const totalRevenue = delivered.reduce((s, o) => s + o.totalAmount, 0);
   const cropMap = new Map<string, { quantity: number; revenue: number }>();
   for (const order of delivered) {
-    const product = products().find((p) => p.id === order.productId);
+    const product = productById.get(order.productId);
     const crop = product?.cropName ?? "Unknown";
     const cur = cropMap.get(crop) ?? { quantity: 0, revenue: 0 };
     cur.quantity += order.quantity;
@@ -349,10 +350,16 @@ export function computeAnalytics(): MarketplaceAnalytics {
     "delivered",
     "cancelled",
   ];
-  const monthMap = new Map<string, { revenue: number; orders: number }>();
+  const statusCount = new Map<OrderStatus, number>();
+  for (const order of allOrders) {
+    statusCount.set(order.status, (statusCount.get(order.status) ?? 0) + 1);
+  }
+  const monthMap = new Map<string, { revenue: number; orders: number; sort: string }>();
   for (const order of delivered) {
-    const month = new Date(order.orderDate).toLocaleDateString("en-IN", { month: "short", year: "numeric" });
-    const cur = monthMap.get(month) ?? { revenue: 0, orders: 0 };
+    const d = new Date(order.orderDate);
+    const sort = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const month = d.toLocaleDateString("en-IN", { month: "short", year: "numeric" });
+    const cur = monthMap.get(month) ?? { revenue: 0, orders: 0, sort };
     cur.revenue += order.totalAmount;
     cur.orders += 1;
     monthMap.set(month, cur);
@@ -367,7 +374,7 @@ export function computeAnalytics(): MarketplaceAnalytics {
   }
   const deliveredCount = onTime + delayed;
   const activeFarmers = new Set(delivered.map((o) => o.farmerId)).size;
-  return {
+  analyticsCache = {
     totalFarmers: farmers().length,
     activeFarmers,
     totalBuyers: buyers().length,
@@ -385,10 +392,12 @@ export function computeAnalytics(): MarketplaceAnalytics {
       .sort((a, b) => b.totalSales - a.totalSales)
       .slice(0, 5)
       .map((f) => ({ farmerId: f.id, name: f.name, totalSales: f.totalSales })),
-    monthlyRevenue: [...monthMap.entries()].map(([month, v]) => ({ month, ...v })),
+    monthlyRevenue: [...monthMap.entries()]
+      .sort((a, b) => a[1].sort.localeCompare(b[1].sort))
+      .map(([month, v]) => ({ month, revenue: v.revenue, orders: v.orders })),
     orderStatusBreakdown: statuses.map((status) => ({
       status,
-      count: allOrders.filter((o) => o.status === status).length,
+      count: statusCount.get(status) ?? 0,
     })),
     farmerEarnings: farmers()
       .map((f) => ({ farmerId: f.id, name: f.name, earnings: f.totalSales }))
@@ -405,10 +414,12 @@ export function computeAnalytics(): MarketplaceAnalytics {
         : 0,
     },
   };
+  analyticsGen = gen;
+  return analyticsCache;
 }
 
 export async function getAnalytics() {
-  return withSim(() => computeAnalytics(), { failRate: 0.04 });
+  return ok(computeAnalytics());
 }
 
 export const mockDataService = {

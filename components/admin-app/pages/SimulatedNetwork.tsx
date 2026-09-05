@@ -38,7 +38,10 @@ export default function SimulatedNetwork({ navCtx: _navCtx }: { navCtx: NavConte
   const [tick, setTick] = useState(0);
   const payments = useMemo(() => readPayments(), [tick]);
   const pendingPay = payments.find((p) => p.status === "pending");
-  const activeShip = readShipments().find((s) => s.status === "in_transit");
+  const activeShipId = useMemo(
+    () => readShipments().find((s) => s.status === "in_transit")?.shipmentId ?? null,
+    [tick],
+  );
   const [gps, setGps] = useState<VehicleLocation | null>(null);
 
   useEffect(() => {
@@ -57,19 +60,20 @@ export default function SimulatedNetwork({ navCtx: _navCtx }: { navCtx: NavConte
   }, [crop]);
 
   useEffect(() => {
-    if (!activeShip) return;
+    if (!activeShipId) return;
+    const id = activeShipId;
     let cancelled = false;
     async function refresh() {
-      const res = await getVehicleLocation(activeShip!.shipmentId);
+      const res = await getVehicleLocation(id);
       if (!cancelled && res.ok) setGps(res.data);
     }
     refresh();
-    const id = setInterval(refresh, 4000);
+    const timer = setInterval(refresh, 8000);
     return () => {
       cancelled = true;
-      clearInterval(id);
+      clearInterval(timer);
     };
-  }, [activeShip]);
+  }, [activeShipId]);
 
   const chart = prices
     .filter((p) => p.market === "K.R. Market")
@@ -181,7 +185,7 @@ export default function SimulatedNetwork({ navCtx: _navCtx }: { navCtx: NavConte
             >
               Open full page →
             </button>
-            {["Tomato", "Onion", "Potato", "Cabbage", "Ragi", "Banana", "Chilli", "Beans"].map((c) => (
+            {["Tomato", "Onion", "Potato", "Cabbage", "Ragi", "Banana", "Chilli", "Beans", "Mango", "Coconut", "Grapes", "Maize"].map((c) => (
               <button
                 key={c}
                 onClick={() => setCrop(c)}

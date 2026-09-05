@@ -20,10 +20,22 @@ const CROP_IMAGES: Record<string, string> = {
   Onions: "https://images.unsplash.com/photo-1642582037312-9b9639be89e6?w=480&h=320&fit=crop&auto=format",
   Carrots: "https://images.unsplash.com/photo-1590868309235-ea34bed7bd7f?w=480&h=320&fit=crop&auto=format",
   Wheat: "https://images.unsplash.com/photo-1535913989690-f90e1c2d4cfa?w=480&h=320&fit=crop&auto=format",
+  Chilli: "https://images.unsplash.com/photo-1583119022894-035ad2b3b0c0?w=480&h=320&fit=crop&auto=format",
+  Cabbage: "https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?w=480&h=320&fit=crop&auto=format",
+  Brinjal: "https://images.unsplash.com/photo-1656423092106-56c2ce44e4d5?w=480&h=320&fit=crop&auto=format",
+  Corn: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=480&h=320&fit=crop&auto=format",
+  Banana: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=480&h=320&fit=crop&auto=format",
+  Bananas: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=480&h=320&fit=crop&auto=format",
 };
 
 export function cropImage(crop: string) {
-  return CROP_IMAGES[crop] ?? "https://images.unsplash.com/photo-1542838132-92c53300491e?w=480&h=320&fit=crop&auto=format";
+  const exact = CROP_IMAGES[crop];
+  if (exact) return exact;
+  const lower = crop.toLowerCase();
+  const key = Object.keys(CROP_IMAGES).find(
+    (k) => lower.includes(k.toLowerCase()) || k.toLowerCase().includes(lower),
+  );
+  return (key ? CROP_IMAGES[key] : undefined) ?? "https://images.unsplash.com/photo-1542838132-92c53300491e?w=480&h=320&fit=crop&auto=format";
 }
 
 type BatchRow = {

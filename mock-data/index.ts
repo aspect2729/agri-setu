@@ -14,7 +14,7 @@ export type {
   VehicleLocation,
 } from "./types";
 
-export { DATASET, FLEET, buildDataset, assertDataset } from "./seed";
+export { DATASET, FLEET, MARKET_BY_CROP, buildDataset, assertDataset } from "./seed";
 export { mockDataService, computeAnalytics } from "./services";
 export {
   getFarmers,

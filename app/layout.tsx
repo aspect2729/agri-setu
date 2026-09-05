@@ -6,12 +6,14 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--font-poppins",
+  display: "swap",
 });
 
 const notoKannada = Noto_Sans_Kannada({
   weight: ["400", "500", "600", "700"],
   subsets: ["kannada"],
   variable: "--font-kannada",
+  display: "swap",
 });
 
 export const metadata: Metadata = {

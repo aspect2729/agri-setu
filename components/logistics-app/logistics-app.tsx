@@ -1,20 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import type { NavigateFn, Page } from "./types";
 import Sidebar from "./chrome/Sidebar";
 import TopBar from "./chrome/TopBar";
-import Dashboard from "./pages/Dashboard";
-import AvailableTrips from "./pages/AvailableTrips";
-import TripDetails from "./pages/TripDetails";
-import ActiveDelivery from "./pages/ActiveDelivery";
-import DeliveryCompletion from "./pages/DeliveryCompletion";
-import MyTrips from "./pages/MyTrips";
-import Earnings from "./pages/Earnings";
-import TripHistory from "./pages/TripHistory";
-import Vehicles from "./pages/Vehicles";
-import Profile from "./pages/Profile";
-import Notifications from "./pages/Notifications";
+
+function PageFallback() {
+  return <div className="p-8 text-sm text-slate-400">Loading…</div>;
+}
+
+const Dashboard = dynamic(() => import("./pages/Dashboard"), { loading: PageFallback });
+const AvailableTrips = dynamic(() => import("./pages/AvailableTrips"), { loading: PageFallback });
+const TripDetails = dynamic(() => import("./pages/TripDetails"), { loading: PageFallback });
+const ActiveDelivery = dynamic(() => import("./pages/ActiveDelivery"), { loading: PageFallback });
+const DeliveryCompletion = dynamic(() => import("./pages/DeliveryCompletion"), { loading: PageFallback });
+const MyTrips = dynamic(() => import("./pages/MyTrips"), { loading: PageFallback });
+const Earnings = dynamic(() => import("./pages/Earnings"), { loading: PageFallback });
+const TripHistory = dynamic(() => import("./pages/TripHistory"), { loading: PageFallback });
+const Vehicles = dynamic(() => import("./pages/Vehicles"), { loading: PageFallback });
+const Profile = dynamic(() => import("./pages/Profile"), { loading: PageFallback });
+const Notifications = dynamic(() => import("./pages/Notifications"), { loading: PageFallback });
 
 const pageTitles: Record<Page, string> = {
   dashboard: "Dashboard",

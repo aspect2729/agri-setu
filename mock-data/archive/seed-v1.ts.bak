@@ -22,7 +22,6 @@ import type {
   ShipmentStatus,
   VerificationReviewStatus,
 } from "./types";
-import { EXTRA_BUYERS, EXTRA_FARMERS, EXTRA_ORDERS, EXTRA_PRODUCTS } from "./extra-drafts";
 import { addMinutes, daysBefore, mulberry32, pad, roundKm } from "./util";
 
 const STATE = "Karnataka";
@@ -42,14 +41,6 @@ const PLACES = {
   kolar: { village: "Kolar", district: "Kolar", lat: 13.136, lng: 78.129 },
   chikkaballapur: { village: "Chikkaballapur", district: "Chikkaballapur", lat: 13.435, lng: 77.728 },
   mysuru: { village: "Mysuru", district: "Mysuru", lat: 12.295, lng: 76.639 },
-  hassan: { village: "Hassan", district: "Hassan", lat: 13.003, lng: 76.1 },
-  davangere: { village: "Davangere", district: "Davangere", lat: 14.466, lng: 75.924 },
-  chitradurga: { village: "Chitradurga", district: "Chitradurga", lat: 14.23, lng: 76.4 },
-  bidadi: { village: "Bidadi", district: "Ramanagara", lat: 12.796, lng: 77.387 },
-  channapatna: { village: "Channapatna", district: "Ramanagara", lat: 12.651, lng: 77.207 },
-  malur: { village: "Malur", district: "Kolar", lat: 13.003, lng: 77.938 },
-  sidlaghatta: { village: "Sidlaghatta", district: "Chikkaballapur", lat: 13.388, lng: 77.865 },
-  gauribidanur: { village: "Gauribidanur", district: "Chikkaballapur", lat: 13.611, lng: 77.517 },
 } as const;
 
 type PlaceKey = keyof typeof PLACES;
@@ -65,12 +56,6 @@ const DESTINATIONS = {
   citykitchen: { name: "City Kitchen Co.", location: "Indiranagar, Bengaluru", lat: 12.9784, lng: 77.6408 },
   agrolink: { name: "AgroLink Exports Yard", location: "Peenya, Bengaluru", lat: 13.028, lng: 77.519 },
   neighborhood: { name: "Neighborhood Mart", location: "Jayanagar 4th Block, Bengaluru", lat: 12.925, lng: 77.5938 },
-  yeshwanthpur: { name: "Yeshwanthpur Mandi Yard", location: "Yeshwanthpur, Bengaluru", lat: 13.028, lng: 77.54 },
-  silkboard: { name: "Silk Board Fresh Hub", location: "Silk Board, Bengaluru", lat: 12.917, lng: 77.623 },
-  koramangala: { name: "Koramangala Food Court Supply", location: "Koramangala 5th Block, Bengaluru", lat: 12.935, lng: 77.624 },
-  hebbal: { name: "Hebbal Cold Chain", location: "Hebbal, Bengaluru", lat: 13.035, lng: 77.597 },
-  mysuru: { name: "Mysuru Central Mandi", location: "Devaraja Market, Mysuru", lat: 12.308, lng: 76.655 },
-  tumakuru: { name: "Tumakuru APMC Traders", location: "Tumakuru APMC Yard", lat: 13.342, lng: 77.102 },
 } as const;
 
 type DestKey = keyof typeof DESTINATIONS;
@@ -79,8 +64,6 @@ const DRIVERS = [
   { name: "Ravi Kumar", vehicle: "KA-01-AB-1234", type: "Tata Ace / Covered Goods Vehicle" },
   { name: "Suresh Naik", vehicle: "KA-02-CD-5678", type: "Mahindra Bolero Pickup" },
   { name: "Imtiaz Ali", vehicle: "KA-05-EF-9012", type: "Tata 407 Covered" },
-  { name: "Lakshmi Transport", vehicle: "KA-03-GH-3456", type: "Ashok Leyland Dost / Light Commercial Vehicle" },
-  { name: "Manoj Shetty", vehicle: "KA-04-JK-7890", type: "Tata Ace / Covered Goods Vehicle" },
 ] as const;
 
 type FarmerDraft = {
@@ -95,7 +78,7 @@ type FarmerDraft = {
   joinedDate: string;
 };
 
-const CORE_FARMER_DRAFTS: FarmerDraft[] = [
+const FARMER_DRAFTS: FarmerDraft[] = [
   { id: "frm-01", name: "Ramesh Kumar", phone: "9000000101", place: "anekal", crops: ["Tomato", "Onion"], farmSize: 2.4, verificationStatus: "verified", rating: 4.7, joinedDate: "2025-03-12" },
   { id: "frm-02", name: "Sita Devi", phone: "9000000102", place: "anekal", crops: ["Ragi", "Tomato"], farmSize: 1.8, verificationStatus: "verified", rating: 4.8, joinedDate: "2025-04-02" },
   { id: "frm-03", name: "Mahesh Patil", phone: "9000000103", place: "jigani", crops: ["Cabbage", "Potato"], farmSize: 3.1, verificationStatus: "verified", rating: 4.5, joinedDate: "2025-02-18" },
@@ -116,14 +99,6 @@ const CORE_FARMER_DRAFTS: FarmerDraft[] = [
   { id: "frm-18", name: "Meenakshi", phone: "9000000118", place: "jigani", crops: ["Beans", "Tomato"], farmSize: 1.5, verificationStatus: "verified", rating: 4.8, joinedDate: "2025-11-04" },
 ];
 
-const FARMER_DRAFTS: FarmerDraft[] = [
-  ...CORE_FARMER_DRAFTS,
-  ...EXTRA_FARMERS.map((d) => {
-    if (!(d.place in PLACES)) throw new Error(`Unknown farmer place ${d.place}`);
-    return { ...d, place: d.place as PlaceKey };
-  }),
-];
-
 type ProductDraft = {
   id: string;
   farmerId: string;
@@ -137,7 +112,7 @@ type ProductDraft = {
   availabilityStatus: AvailabilityStatus;
 };
 
-const CORE_PRODUCT_DRAFTS: ProductDraft[] = [
+const PRODUCT_DRAFTS: ProductDraft[] = [
   { id: "prd-01", farmerId: "frm-01", cropName: "Tomato", category: "vegetable", quantity: 5200, pricePerUnit: 22, minimumOrderQuantity: 200, harvestDaysAgo: 1, qualityGrade: "A", availabilityStatus: "available" },
   { id: "prd-02", farmerId: "frm-01", cropName: "Onion", category: "vegetable", quantity: 3800, pricePerUnit: 18, minimumOrderQuantity: 250, harvestDaysAgo: 2, qualityGrade: "A", availabilityStatus: "available" },
   { id: "prd-03", farmerId: "frm-02", cropName: "Ragi", category: "grain", quantity: 2400, pricePerUnit: 42, minimumOrderQuantity: 100, harvestDaysAgo: 8, qualityGrade: "A", availabilityStatus: "available" },
@@ -172,8 +147,6 @@ const CORE_PRODUCT_DRAFTS: ProductDraft[] = [
   { id: "prd-32", farmerId: "frm-18", cropName: "Beans", category: "vegetable", quantity: 980, pricePerUnit: 44, minimumOrderQuantity: 50, harvestDaysAgo: 1, qualityGrade: "A", availabilityStatus: "limited" },
 ];
 
-const PRODUCT_DRAFTS: ProductDraft[] = [...CORE_PRODUCT_DRAFTS, ...EXTRA_PRODUCTS];
-
 type BuyerDraft = {
   id: string;
   name: string;
@@ -183,7 +156,7 @@ type BuyerDraft = {
   rating: number;
 };
 
-const CORE_BUYER_DRAFTS: BuyerDraft[] = [
+const BUYER_DRAFTS: BuyerDraft[] = [
   { id: "byr-01", name: "FreshMart Wholesale", type: "wholesaler", dest: "ecity", contact: "9000000201", rating: 4.6 },
   { id: "byr-02", name: "Bengaluru Wholesale Hub", type: "wholesaler", dest: "krmarket", contact: "9000000202", rating: 4.4 },
   { id: "byr-03", name: "South India Food Processors", type: "retailer", dest: "processors", contact: "9000000203", rating: 4.5 },
@@ -194,14 +167,6 @@ const CORE_BUYER_DRAFTS: BuyerDraft[] = [
   { id: "byr-08", name: "AgroLink Exports", type: "wholesaler", dest: "agrolink", contact: "9000000208", rating: 4.1 },
   { id: "byr-09", name: "Neighborhood Mart", type: "individual", dest: "neighborhood", contact: "9000000209", rating: 4.5 },
   { id: "byr-10", name: "Retail Distribution Center", type: "retailer", dest: "bommanahalli", contact: "9000000210", rating: 4.4 },
-];
-
-const BUYER_DRAFTS: BuyerDraft[] = [
-  ...CORE_BUYER_DRAFTS,
-  ...EXTRA_BUYERS.map((d) => {
-    if (!(d.dest in DESTINATIONS)) throw new Error(`Unknown buyer dest ${d.dest}`);
-    return { ...d, dest: d.dest as DestKey };
-  }),
 ];
 
 type OrderSpec = {
@@ -219,7 +184,7 @@ type OrderSpec = {
   method?: PaymentMethod;
 };
 
-const CORE_ORDER_SPECS: OrderSpec[] = [
+const ORDER_SPECS: OrderSpec[] = [
   { id: "ord-01", buyerId: "byr-02", productId: "prd-02", quantity: 3000, status: "pending", daysAgo: 0, hour: 8, expectedInDays: 1, tripCode: "AS-TRP-1051", payment: "pending", method: "UPI" },
   { id: "ord-02", buyerId: "byr-01", productId: "prd-11", quantity: 4500, status: "pending", daysAgo: 0, hour: 9, expectedInDays: 1, tripCode: "AS-TRP-1052", payment: "pending", method: "NEFT" },
   { id: "ord-03", buyerId: "byr-10", productId: "prd-06", quantity: 2000, status: "confirmed", daysAgo: 0, hour: 7, expectedInDays: 1, tripCode: "AS-TRP-1053", payment: "pending", method: "UPI" },
@@ -248,8 +213,6 @@ const CORE_ORDER_SPECS: OrderSpec[] = [
   { id: "ord-26", buyerId: "byr-06", productId: "prd-16", quantity: 2000, status: "in_transit", daysAgo: 1, hour: 6, expectedInDays: 0, tripCode: "AS-TRP-1059", driverIndex: 2, payment: "success", method: "UPI" },
 ];
 
-const ORDER_SPECS: OrderSpec[] = [...CORE_ORDER_SPECS, ...EXTRA_ORDERS];
-
 const MARKETS = [
   { market: "Anekal APMC", location: "Anekal, Bengaluru Rural" },
   { market: "K.R. Market", location: "K.R. Market, Bengaluru" },
@@ -257,8 +220,6 @@ const MARKETS = [
   { market: "Tumakuru APMC", location: "Tumakuru" },
   { market: "Mandya APMC", location: "Mandya" },
   { market: "Kolar APMC", location: "Kolar" },
-  { market: "Mysuru APMC", location: "Devaraja Market, Mysuru" },
-  { market: "Hassan APMC", location: "Hassan" },
 ] as const;
 
 const CROP_BASE: Record<string, number> = {
@@ -270,15 +231,6 @@ const CROP_BASE: Record<string, number> = {
   Banana: 2800,
   Chilli: 7800,
   Beans: 4100,
-  Mango: 5200,
-  Coconut: 2600,
-  Grapes: 6100,
-  Maize: 2100,
-  Groundnut: 6800,
-  Cauliflower: 2400,
-  Coriander: 8200,
-  Sugarcane: 350,
-  Arecanut: 32000,
 };
 
 function loc(place: PlaceKey) {
@@ -300,7 +252,6 @@ function shipmentStatusFor(order: OrderStatus, hasDriver: boolean, hasTripCode: 
 function buildFarmers(): Farmer[] {
   return FARMER_DRAFTS.map((d) => {
     const p = PLACES[d.place];
-    if (!p) throw new Error(`Unknown place ${d.place} on farmer ${d.id}`);
     return {
       id: d.id,
       name: d.name,
@@ -322,9 +273,8 @@ function buildFarmers(): Farmer[] {
 }
 
 function buildProducts(farmers: Farmer[]): Product[] {
-  const farmerById = new Map(farmers.map((f) => [f.id, f]));
   return PRODUCT_DRAFTS.map((d) => {
-    const farmer = farmerById.get(d.farmerId);
+    const farmer = farmers.find((f) => f.id === d.farmerId);
     if (!farmer) throw new Error(`Product ${d.id} references missing farmer ${d.farmerId}`);
     return {
       id: d.id,
@@ -346,7 +296,6 @@ function buildProducts(farmers: Farmer[]): Product[] {
 function buildBuyers(): Buyer[] {
   return BUYER_DRAFTS.map((d) => {
     const dest = DESTINATIONS[d.dest];
-    if (!dest) throw new Error(`Unknown destination ${d.dest} on buyer ${d.id}`);
     return {
       id: d.id,
       name: d.name,
@@ -366,19 +315,13 @@ function buildOrders(farmers: Farmer[], buyers: Buyer[], products: Product[]) {
   const orders: Order[] = [];
   const shipments: Shipment[] = [];
   const payments: Payment[] = [];
-  const farmerById = new Map(farmers.map((f) => [f.id, f]));
-  const buyerById = new Map(buyers.map((b) => [b.id, b]));
-  const productById = new Map(products.map((p) => [p.id, p]));
 
   for (const spec of ORDER_SPECS) {
-    const product = productById.get(spec.productId);
+    const product = products.find((p) => p.id === spec.productId);
     if (!product) throw new Error(`Order ${spec.id} references missing product ${spec.productId}`);
-    const farmer = farmerById.get(product.farmerId);
-    const buyer = buyerById.get(spec.buyerId);
+    const farmer = farmers.find((f) => f.id === product.farmerId);
+    const buyer = buyers.find((b) => b.id === spec.buyerId);
     if (!farmer || !buyer) throw new Error(`Order ${spec.id} is missing farmer or buyer`);
-    if (spec.driverIndex != null && !DRIVERS[spec.driverIndex]) {
-      throw new Error(`Order ${spec.id} references missing driver ${spec.driverIndex}`);
-    }
 
     const orderDate = daysBefore(spec.daysAgo, spec.hour);
     const subtotal = spec.quantity * product.pricePerUnit;
@@ -530,16 +473,10 @@ function buildNotifications(
     });
   };
 
-  const farmerById = new Map(farmers.map((f) => [f.id, f]));
-  const buyerById = new Map(buyers.map((b) => [b.id, b]));
-  const productById = new Map(products.map((p) => [p.id, p]));
-  const paymentByOrder = new Map(payments.map((p) => [p.orderId, p]));
-  const shipmentByOrder = new Map(shipments.map((s) => [s.orderId, s]));
-
   for (const order of orders) {
-    const farmer = farmerById.get(order.farmerId)!;
-    const buyer = buyerById.get(order.buyerId)!;
-    const product = productById.get(order.productId)!;
+    const farmer = farmers.find((f) => f.id === order.farmerId)!;
+    const buyer = buyers.find((b) => b.id === order.buyerId)!;
+    const product = products.find((p) => p.id === order.productId)!;
     push(
       buyer.id,
       "new_order",
@@ -558,7 +495,7 @@ function buildNotifications(
         order.id,
       );
     }
-    const payment = paymentByOrder.get(order.id)!;
+    const payment = payments.find((p) => p.orderId === order.id)!;
     if (payment.status === "success") {
       push(
         farmer.id,
@@ -579,7 +516,7 @@ function buildNotifications(
         payment.paymentId,
       );
     }
-    const shipment = shipmentByOrder.get(order.id);
+    const shipment = shipments.find((s) => s.orderId === order.id);
     if (!shipment) continue;
     if (shipment.status !== "pending") {
       push(
@@ -625,7 +562,7 @@ function buildNotifications(
 
   for (const v of verifications) {
     if (!v.reviewedDate) continue;
-    const farmer = farmerById.get(v.farmerId)!;
+    const farmer = farmers.find((f) => f.id === v.farmerId)!;
     push(
       farmer.id,
       "verification_update",
@@ -676,22 +613,17 @@ function buildMarketPrices(): MarketPrice[] {
 
 function applyAggregates(farmers: Farmer[], buyers: Buyer[], orders: Order[]) {
   const delivered = orders.filter((o) => o.status === "delivered");
-  const farmerSales = new Map<string, number>();
-  const buyerOrders = new Map<string, number>();
-  const buyerSpent = new Map<string, number>();
-  for (const order of orders) {
-    buyerOrders.set(order.buyerId, (buyerOrders.get(order.buyerId) ?? 0) + 1);
-  }
-  for (const order of delivered) {
-    farmerSales.set(order.farmerId, (farmerSales.get(order.farmerId) ?? 0) + order.totalAmount);
-    buyerSpent.set(order.buyerId, (buyerSpent.get(order.buyerId) ?? 0) + order.totalAmount);
-  }
   for (const farmer of farmers) {
-    farmer.totalSales = farmerSales.get(farmer.id) ?? 0;
+    farmer.totalSales = delivered
+      .filter((o) => o.farmerId === farmer.id)
+      .reduce((sum, o) => sum + o.totalAmount, 0);
   }
   for (const buyer of buyers) {
-    buyer.totalOrders = buyerOrders.get(buyer.id) ?? 0;
-    buyer.totalSpent = buyerSpent.get(buyer.id) ?? 0;
+    const theirs = orders.filter((o) => o.buyerId === buyer.id);
+    buyer.totalOrders = theirs.length;
+    buyer.totalSpent = theirs
+      .filter((o) => o.status === "delivered")
+      .reduce((sum, o) => sum + o.totalAmount, 0);
   }
 }
 
@@ -700,25 +632,9 @@ export function assertDataset(data: MockDataset) {
   const products = new Map(data.products.map((p) => [p.id, p]));
   const buyers = new Set(data.buyers.map((b) => b.id));
   const orders = new Map(data.orders.map((o) => [o.id, o]));
-  const unique = (ids: string[], label: string) => {
-    if (new Set(ids).size !== ids.length) throw new Error(`Duplicate ${label} id`);
-  };
-  unique(data.farmers.map((f) => f.id), "farmer");
-  unique(data.products.map((p) => p.id), "product");
-  unique(data.buyers.map((b) => b.id), "buyer");
-  unique(data.orders.map((o) => o.id), "order");
-  unique(data.farmers.map((f) => f.phone), "farmer phone");
-  unique(data.buyers.map((b) => b.contact), "buyer contact");
-
-  const tripCodes = data.orders.map((o) => o.tripCode).filter((c): c is string => Boolean(c));
-  unique(tripCodes, "trip code");
 
   for (const product of data.products) {
     if (!farmers.has(product.farmerId)) throw new Error(`Orphan product ${product.id}`);
-  }
-  const farmersWithStock = new Set(data.products.map((p) => p.farmerId));
-  for (const farmer of data.farmers) {
-    if (!farmersWithStock.has(farmer.id)) throw new Error(`Farmer ${farmer.id} has no products`);
   }
   for (const order of data.orders) {
     if (!farmers.has(order.farmerId) || !buyers.has(order.buyerId) || !products.has(order.productId)) {
@@ -782,19 +698,9 @@ export function buildDataset(): MockDataset {
 
 export const DATASET = buildDataset();
 
-export const MARKET_BY_CROP: Map<string, MarketPrice[]> = (() => {
-  const map = new Map<string, MarketPrice[]>();
-  for (const row of DATASET.marketPrices) {
-    const list = map.get(row.crop);
-    if (list) list.push(row);
-    else map.set(row.crop, [row]);
-  }
-  return map;
-})();
-
 export const FLEET = {
   vehicle: DRIVERS[0].vehicle,
   driver: DRIVERS[0].name,
-  coverage: "Bengaluru Rural · Ramanagara · Kolar · Tumakuru · Mandya · Mysuru",
+  coverage: "Bengaluru Rural · Anekal · Jigani · Attibele",
   drivers: DRIVERS,
 };

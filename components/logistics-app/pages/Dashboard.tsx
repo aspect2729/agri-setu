@@ -22,7 +22,7 @@ function firstName(name: string) {
 }
 
 export default function Dashboard({ navigate }: Props) {
-  const { operatorName, trips, notifications } = useLogisticsData()
+  const { operatorName, trips, notifications, vehicles } = useLogisticsData()
   const availableTrips = trips.filter((t) => t.status === 'available')
   const activeTrip = trips.find((t) => isActiveStatus(t.status)) ?? trips.find((t) => t.status === 'in-transit')
   const completed = trips.filter((t) => t.status === 'delivered')
@@ -63,15 +63,15 @@ export default function Dashboard({ navigate }: Props) {
         <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-3">Today's Supply Chain Flow</p>
         <div className="flex items-center gap-0 flex-wrap">
           {[
-            { emoji: '🌾', label: 'Farmers', sub: '240+ suppliers', color: 'text-green-700 bg-green-50 border-green-200', active: false },
+            { emoji: '🌾', label: 'Farmers', sub: `${trips.length}+ lots moving`, color: 'text-green-700 bg-green-50 border-green-200', active: false },
             null,
-            { emoji: '🏪', label: 'White Stores', sub: '3 locations', color: 'text-blue-700 bg-blue-50 border-blue-200', active: false },
+            { emoji: '🏪', label: 'White Stores', sub: `${new Set(trips.map((t) => t.pickup.name)).size} pickup points`, color: 'text-blue-700 bg-blue-50 border-blue-200', active: false },
             null,
             { emoji: '📦', label: 'Aggregated Cargo', sub: 'Ready for dispatch', color: 'text-amber-700 bg-amber-50 border-amber-200', active: false },
             null,
             { emoji: '🚛', label: 'Logistics Partner', sub: `You — ${operatorName}`, color: 'text-purple-700 bg-purple-50 border-purple-200', active: true },
             null,
-            { emoji: '🏭', label: 'Bulk Buyers', sub: '3 destinations', color: 'text-slate-700 bg-slate-50 border-slate-200', active: false },
+            { emoji: '🏭', label: 'Bulk Buyers', sub: `${new Set(trips.map((t) => t.destination.name)).size} destinations`, color: 'text-slate-700 bg-slate-50 border-slate-200', active: false },
           ].map((item, i) => {
             if (item === null) {
               return (
@@ -328,7 +328,7 @@ export default function Dashboard({ navigate }: Props) {
               {[
                 { label: 'Browse available trips', sub: `${availableTrips.length} trips near you`, icon: '📋', action: () => navigate('available-trips') },
                 { label: 'View earnings', sub: `₹${earnings.toLocaleString('en-IN')} completed`, icon: '💰', action: () => navigate('earnings') },
-                { label: 'My vehicles', sub: '1 active · 1 standby', icon: '🚛', action: () => navigate('vehicles') },
+                { label: 'My vehicles', sub: `${vehicles.filter((v) => v.status === 'on-trip').length} on trip · ${vehicles.filter((v) => v.status === 'available').length} available`, icon: '🚛', action: () => navigate('vehicles') },
               ].map((item) => (
                 <button
                   key={item.label}

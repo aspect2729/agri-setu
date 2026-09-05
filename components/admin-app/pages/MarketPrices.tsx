@@ -105,7 +105,7 @@ export default function MarketPrices({ navCtx: _navCtx }: { navCtx: NavContext }
 
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         {[
-          { label: "APMC average", value: avgModal ? inr(avgModal) : "—", sub: "Modal across 6 markets" },
+          { label: "APMC average", value: avgModal ? inr(avgModal) : "—", sub: "Modal across 8 markets" },
           { label: "Highest mandi", value: high ? inr(high.modalPrice) : "—", sub: high?.market ?? "" },
           { label: "Lowest mandi", value: low ? inr(low.modalPrice) : "—", sub: low?.market ?? "" },
           {

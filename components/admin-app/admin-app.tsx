@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import {
   LayoutDashboard, Store, ArrowLeftRight, Package, Archive,
   Users, BarChart3, Bell, LogOut, Search, X,
@@ -9,18 +10,23 @@ import {
 import { signOut } from "@/lib/actions";
 import { useAdminData } from "./data-context";
 import type { Page, NavContext } from "./nav";
-import Dashboard from "./pages/Dashboard";
-import WhiteStores from "./pages/WhiteStores";
-import Transactions from "./pages/Transactions";
-import CashFlow from "./pages/CashFlow";
-import Matching from "./pages/Matching";
-import Orders from "./pages/Orders";
-import Inventory from "./pages/Inventory";
-import UsersPage from "./pages/UsersPage";
-import Reports from "./pages/Reports";
-import MarketPrices from "./pages/MarketPrices";
-import SimulatedNetwork from "./pages/SimulatedNetwork";
 import { BrandLogo } from "@/components/brand-logo";
+
+function PageFallback() {
+  return <div className="p-8 text-sm text-[#8FA898]">Loading…</div>;
+}
+
+const Dashboard = dynamic(() => import("./pages/Dashboard"), { loading: PageFallback });
+const WhiteStores = dynamic(() => import("./pages/WhiteStores"), { loading: PageFallback });
+const Transactions = dynamic(() => import("./pages/Transactions"), { loading: PageFallback });
+const CashFlow = dynamic(() => import("./pages/CashFlow"), { loading: PageFallback });
+const Matching = dynamic(() => import("./pages/Matching"), { loading: PageFallback });
+const Orders = dynamic(() => import("./pages/Orders"), { loading: PageFallback });
+const Inventory = dynamic(() => import("./pages/Inventory"), { loading: PageFallback });
+const UsersPage = dynamic(() => import("./pages/UsersPage"), { loading: PageFallback });
+const Reports = dynamic(() => import("./pages/Reports"), { loading: PageFallback });
+const MarketPrices = dynamic(() => import("./pages/MarketPrices"), { loading: PageFallback });
+const SimulatedNetwork = dynamic(() => import("./pages/SimulatedNetwork"), { loading: PageFallback });
 
 const navItems = [
   { id: "dashboard" as Page, label: "Dashboard", icon: LayoutDashboard },

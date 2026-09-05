@@ -22,7 +22,7 @@ export function SimulatedTracking({ shipmentId, from, to }: { shipmentId: string
       setLoc(result.data);
     }
     refresh();
-    const id = setInterval(refresh, 4000);
+    const id = setInterval(refresh, 8000);
     return () => {
       cancelled = true;
       clearInterval(id);

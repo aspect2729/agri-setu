@@ -1,10 +1,12 @@
 /**
- * Hyperlocal weather for a farmer's GPS point.
+ * Farm-point weather for a farmer's GPS.
  *
- * We do not train a weather model. Open-Meteo already interpolates national
- * weather-service grids (~9 km). The precision win is querying that model at
- * the farm's lat/lng — not a district name — then scoring harvest / White Store
- * logistics risk for the current Indian crop season.
+ * We do not train a weather model. Open-Meteo interpolates national weather
+ * grids (~9 km) to the requested lat/lng, then statistically downscales with a
+ * 90 m elevation model (land cell, similar height). That is as local as a free
+ * API gets for India — not a rain gauge on the plot, and not IMD AWS (that
+ * needs a key). We add hourly rain timing, topsoil moisture, and ET₀ so the
+ * score is about this field, not the district HQ.
  */
 
 export type Season = "Kharif" | "Rabi" | "Zaid";
@@ -21,18 +23,36 @@ export type WeatherDay = {
   rainChance: number | null;
 };
 
+export type WeatherHour = {
+  time: string;
+  weatherCode: number;
+  temp: number;
+  rainMm: number;
+  rainChance: number | null;
+};
+
 export type FarmWeather = {
   lat: number;
   lng: number;
   placeLabel: string;
+  elevationM: number | null;
   season: Season;
   currentTemp: number;
   currentCode: number;
   currentLabel: Copy;
   humidity: number | null;
+  feelsLike: number | null;
+  windKmh: number | null;
+  precipNowMm: number | null;
   days: WeatherDay[];
+  hours: WeatherHour[];
+  nextRainAt: string | null;
+  rainNext24hMm: number;
   rainNext48hMm: number;
   rainNext3DaysMm: number;
+  soilMoisturePct: number | null;
+  et0TodayMm: number | null;
+  precipHoursToday: number | null;
   risk: {
     level: RiskLevel;
     message: Copy;
@@ -43,10 +63,24 @@ export type FarmWeather = {
 };
 
 type ForecastJson = {
+  elevation?: number;
   current?: {
+    time?: string;
     temperature_2m?: number;
     weather_code?: number;
     relative_humidity_2m?: number;
+    precipitation?: number;
+    wind_speed_10m?: number;
+    apparent_temperature?: number;
+  };
+  hourly?: {
+    time?: string[];
+    weather_code?: number[];
+    temperature_2m?: number[];
+    precipitation?: number[];
+    precipitation_probability?: (number | null)[];
+    et0_fao_evapotranspiration?: (number | null)[];
+    soil_moisture_0_to_7cm?: (number | null)[];
   };
   daily?: {
     time?: string[];
@@ -55,6 +89,8 @@ type ForecastJson = {
     temperature_2m_min?: number[];
     precipitation_sum?: number[];
     precipitation_probability_max?: number[];
+    et0_fao_evapotranspiration?: (number | null)[];
+    precipitation_hours?: (number | null)[];
   };
 };
 
@@ -76,10 +112,10 @@ type GeocodeJson = {
   }[];
 };
 
-function fetchInit(timeoutMs: number): RequestInit {
+function fetchInit(timeoutMs: number, revalidateSeconds = 1800): RequestInit {
   return {
     cache: "force-cache",
-    next: { revalidate: 1800 },
+    next: { revalidate: revalidateSeconds },
     signal: AbortSignal.timeout(timeoutMs),
   } as RequestInit;
 }
@@ -155,17 +191,20 @@ function seasonBucket(dateIso: string, season: Season): number | null {
 export function computeRisk(
   days: WeatherDay[],
   season: Season,
-  crops: string[]
+  crops: string[],
+  hours: WeatherHour[] = []
 ): FarmWeather["risk"] {
   const next3 = days.slice(0, 3);
   const rain3 = next3.reduce((s, d) => s + d.rainMm, 0);
   const rain48 = days.slice(0, 2).reduce((s, d) => s + d.rainMm, 0);
+  const rain6h = hours.slice(0, 6).reduce((s, h) => s + h.rainMm, 0);
+  const stormSoon = hours.slice(0, 6).some((h) => h.weatherCode >= 95);
   const minTemp = Math.min(...next3.map((d) => d.tempMin), 99);
   const maxTemp = Math.max(...next3.map((d) => d.tempMax), -99);
 
   let level: RiskLevel = "LOW";
-  if (rain3 > 50) level = "HIGH";
-  else if (rain3 > 15) level = "MODERATE";
+  if (rain3 > 50 || stormSoon || rain6h > 25) level = "HIGH";
+  else if (rain3 > 15 || rain6h > 8) level = "MODERATE";
 
   const frost = season === "Rabi" && minTemp < 4;
   const heat = season === "Zaid" && maxTemp > 42;
@@ -173,7 +212,12 @@ export function computeRisk(
 
   const rain3Label = Math.round(rain3);
   let message: Copy;
-  if (frost && rain3 <= 15) {
+  if (stormSoon) {
+    message = {
+      en: `Thunderstorm in the next 6 hours at this field (~${Math.round(rain6h)} mm). Harvest now only if you can cover crates.`,
+      kn: `ಮುಂದಿನ 6 ಗಂಟೆ ಈ ಜಮೀನಿನಲ್ಲಿ ಗುಡುಗು (~${Math.round(rain6h)} ಮಿಮೀ). ಪೆಟ್ಟಿಗೆ ಮುಚ್ಚಬಹುದಾದರೆ ಮಾತ್ರ ಕೊಯ್ಲು.`,
+    };
+  } else if (frost && rain3 <= 15) {
     message = {
       en: `Rabi frost risk: nights near ${Math.round(minTemp)}°C. Standing crop and stored lots can take cold damage.`,
       kn: `ರಬಿ ಹಿಮ ಅಪಾಯ: ರಾತ್ರಿ ಸುಮಾರು ${Math.round(minTemp)}°C. ನಿಂತ ಬೆಳೆ ಮತ್ತು ಸಂಗ್ರಹಿತ ಉತ್ಪನ್ನಕ್ಕೆ ತೊಂದರೆ.`,
@@ -202,6 +246,18 @@ export function computeRisk(
 
   const actions: Copy[] = [];
   const cropHint = perishableHint(crops);
+  const nextWet = hours.find((h) => h.rainMm >= 0.2);
+
+  if (nextWet && hours.indexOf(nextWet) < 12) {
+    actions.push({
+      en: cropHint
+        ? `Rain at this field in the next few hours. Finish ${cropHint} harvest before it starts, or wait until crates are dry.`
+        : "Rain at this field in the next few hours. Finish harvest before it starts, or wait until crates are dry.",
+      kn: cropHint
+        ? `ಮುಂದಿನ ಕೆಲವು ಗಂಟೆ ಈ ಜಮೀನಿನಲ್ಲಿ ಮಳೆ. ${cropHint} ಕೊಯ್ಲನ್ನು ಮಳೆಗೆ ಮುನ್ನ ಮುಗಿಸಿ, ಅಥವಾ ಪೆಟ್ಟಿಗೆ ಒಣಗುವವರೆಗೆ ಕಾಯಿರಿ.`
+        : "ಮುಂದಿನ ಕೆಲವು ಗಂಟೆ ಈ ಜಮೀನಿನಲ್ಲಿ ಮಳೆ. ಕೊಯ್ಲನ್ನು ಮಳೆಗೆ ಮುನ್ನ ಮುಗಿಸಿ, ಅಥವಾ ಪೆಟ್ಟಿಗೆ ಒಣಗುವವರೆಗೆ ಕಾಯಿರಿ.",
+    });
+  }
 
   if (rain48 > 10) {
     actions.push({
@@ -288,17 +344,57 @@ async function fetchForecast(lat: number, lng: number): Promise<ForecastJson> {
   const url = new URL("https://api.open-meteo.com/v1/forecast");
   url.searchParams.set("latitude", String(lat));
   url.searchParams.set("longitude", String(lng));
-  url.searchParams.set("current", "temperature_2m,weather_code,relative_humidity_2m");
+  url.searchParams.set(
+    "current",
+    "temperature_2m,weather_code,relative_humidity_2m,precipitation,wind_speed_10m,apparent_temperature"
+  );
+  url.searchParams.set(
+    "hourly",
+    "temperature_2m,precipitation,precipitation_probability,weather_code,et0_fao_evapotranspiration,soil_moisture_0_to_7cm"
+  );
   url.searchParams.set(
     "daily",
-    "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max"
+    "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,et0_fao_evapotranspiration,precipitation_hours"
   );
   url.searchParams.set("forecast_days", "7");
+  url.searchParams.set("forecast_hours", "36");
   url.searchParams.set("timezone", "Asia/Kolkata");
+  url.searchParams.set("wind_speed_unit", "kmh");
+  url.searchParams.set("cell_selection", "land");
 
-  const res = await fetch(url, fetchInit(20_000));
+  const res = await fetch(url, fetchInit(20_000, 900));
   if (!res.ok) throw new Error(`Forecast ${res.status}`);
   return (await res.json()) as ForecastJson;
+}
+
+function upcomingHours(forecast: ForecastJson): WeatherHour[] {
+  const hourly = forecast.hourly;
+  const times = hourly?.time ?? [];
+  if (!hourly || !times.length) return [];
+  const key = (forecast.current?.time ?? times[0]).slice(0, 13);
+  let start = times.findIndex((t) => t.slice(0, 13) >= key);
+  if (start < 0) start = 0;
+  const end = Math.min(times.length, start + 24);
+  const hours: WeatherHour[] = [];
+  for (let i = start; i < end; i++) {
+    hours.push({
+      time: times[i],
+      weatherCode: hourly.weather_code?.[i] ?? 1,
+      temp: hourly.temperature_2m?.[i] ?? 0,
+      rainMm: hourly.precipitation?.[i] ?? 0,
+      rainChance: hourly.precipitation_probability?.[i] ?? null,
+    });
+  }
+  return hours;
+}
+
+function firstNumber(values: (number | null | undefined)[] | undefined, start: number): number | null {
+  if (!values) return null;
+  for (let i = start; i < values.length; i++) {
+    const v = values[i];
+    if (v != null && Number.isFinite(v)) return v;
+  }
+  return null;
 }
 
 async function fetchSeasonalHistory(
@@ -372,23 +468,48 @@ export async function fetchFarmWeather(opts: {
     }));
     if (!days.length) return null;
 
+    const hours = upcomingHours(forecast);
     const currentCode = forecast.current?.weather_code ?? days[0].weatherCode;
+    const rainNext24hMm = hours.reduce((s, h) => s + h.rainMm, 0);
     const rainNext48hMm = days.slice(0, 2).reduce((s, d) => s + d.rainMm, 0);
     const rainNext3DaysMm = days.slice(0, 3).reduce((s, d) => s + d.rainMm, 0);
+    const hourKey = (forecast.current?.time ?? hours[0]?.time ?? "").slice(0, 13);
+    const soilStart = (forecast.hourly?.time ?? []).findIndex((t) => t.slice(0, 13) >= hourKey);
+    const soilRaw = firstNumber(forecast.hourly?.soil_moisture_0_to_7cm, soilStart < 0 ? 0 : soilStart);
+    const nextRainAt = hours.find((h) => h.rainMm >= 0.2)?.time ?? null;
 
     return {
       lat,
       lng,
       placeLabel: opts.placeLabel,
+      elevationM: forecast.elevation != null ? Math.round(forecast.elevation) : null,
       season,
       currentTemp: Math.round(forecast.current?.temperature_2m ?? days[0].tempMax),
       currentCode,
       currentLabel: wmoLabel(currentCode),
       humidity: forecast.current?.relative_humidity_2m ?? null,
+      feelsLike:
+        forecast.current?.apparent_temperature != null
+          ? Math.round(forecast.current.apparent_temperature)
+          : null,
+      windKmh:
+        forecast.current?.wind_speed_10m != null
+          ? Math.round(forecast.current.wind_speed_10m)
+          : null,
+      precipNowMm: forecast.current?.precipitation ?? null,
       days,
+      hours,
+      nextRainAt,
+      rainNext24hMm,
       rainNext48hMm,
       rainNext3DaysMm,
-      risk: computeRisk(days, season, opts.crops ?? []),
+      soilMoisturePct: soilRaw != null ? Math.round(soilRaw * 100) : null,
+      et0TodayMm:
+        forecast.daily?.et0_fao_evapotranspiration?.[0] != null
+          ? Math.round(forecast.daily.et0_fao_evapotranspiration[0] * 10) / 10
+          : null,
+      precipHoursToday: forecast.daily?.precipitation_hours?.[0] ?? null,
+      risk: computeRisk(days, season, opts.crops ?? [], hours),
       avgSeasonalRainfallMm: history?.avg ?? null,
       yearsUsed: history?.years ?? 0,
     };

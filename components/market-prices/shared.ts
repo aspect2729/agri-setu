@@ -9,6 +9,10 @@ export const MANDI_CROPS = [
   "Banana",
   "Chilli",
   "Beans",
+  "Mango",
+  "Coconut",
+  "Grapes",
+  "Maize",
 ] as const;
 
 /** Grade-A White Store counter rate (₹/kg), aligned with employee `CROPS`. */
@@ -21,6 +25,13 @@ export const STORE_RS_PER_KG: Record<string, number> = {
   Banana: 28,
   Chilli: 80,
   Beans: 40,
+  Mango: 52,
+  Coconut: 28,
+  Grapes: 62,
+  Maize: 18,
+  Groundnut: 70,
+  Cauliflower: 26,
+  Coriander: 88,
 };
 
 export function inr(n: number) {

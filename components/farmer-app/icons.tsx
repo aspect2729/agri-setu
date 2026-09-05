@@ -450,3 +450,13 @@ export function IconGlobe({ size = defaults.size, color = defaults.color, classN
     </svg>
   );
 }
+
+export function IconWind({ size = defaults.size, color = defaults.color, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M4 10H15.5C16.88 10 18 8.88 18 7.5C18 6.12 16.88 5 15.5 5C14.12 5 13 6.12 13 7.5" stroke={color} strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M4 14H18.5C19.88 14 21 15.12 21 16.5C21 17.88 19.88 19 18.5 19C17.12 19 16 17.88 16 16.5" stroke={color} strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M4 12H11" stroke={color} strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  );
+}

@@ -26,6 +26,8 @@ UI must call **services or adapters**, never invent numbers in components. Earni
 4. Restart `npm run dev`. There is no separate generate script — the TypeScript module *is* the generator.
 5. `totalSales` / `totalSpent` / analytics GMV are computed from **delivered** orders after the drafts are expanded. Do not hardcode those totals.
 
+Previous v1 drafts are stashed in `archive/seed-v1.ts.bak`. Extra rows live in `extra-drafts.ts` and are concatenated in `seed.ts`.
+
 Clock is pinned to `DEMO_NOW` (`2026-09-04`) so timelines stay stable.
 
 ## Simulated vs real

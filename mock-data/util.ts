@@ -95,8 +95,9 @@ export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function simulateNetwork(min = 180, max = 520) {
-  await sleep(min + Math.round(Math.random() * (max - min)));
+export async function simulateNetwork(min = 0, max = 40) {
+  if (max <= 0) return;
+  await sleep(min + Math.round(Math.random() * Math.max(0, max - min)));
 }
 
 export function ok<T>(data: T): MockOk<T> {
@@ -109,10 +110,12 @@ export function err(error: string): MockErr {
 
 export async function withSim<T>(
   fn: () => T,
-  opts?: { failRate?: number; emptyAsError?: boolean },
+  opts?: { failRate?: number; emptyAsError?: boolean; min?: number; max?: number },
 ): Promise<MockResult<T>> {
-  await simulateNetwork();
-  if (Math.random() < (opts?.failRate ?? 0.06)) {
+  const min = opts?.min ?? 0;
+  const max = opts?.max ?? 0;
+  if (max > 0) await simulateNetwork(min, max);
+  if (Math.random() < (opts?.failRate ?? 0)) {
     return err("Simulated network error. Retry the request.");
   }
   const data = fn();
