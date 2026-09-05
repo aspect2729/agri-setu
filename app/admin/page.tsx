@@ -1,4 +1,3 @@
-import { Outfit, Fraunces, JetBrains_Mono } from "next/font/google";
 import { requireProfile } from "@/lib/get-profile";
 import { createClient } from "@/lib/supabase/server";
 import { AdminDataProvider } from "@/components/admin-app/data-context";
@@ -6,10 +5,6 @@ import { AdminApp } from "@/components/admin-app/admin-app";
 import { mapAdminData } from "@/components/admin-app/map-data";
 
 export const dynamic = "force-dynamic";
-
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
-const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
-const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" });
 
 export default async function AdminDashboard() {
   const profile = await requireProfile("admin");
@@ -51,7 +46,7 @@ export default async function AdminDashboard() {
   });
 
   return (
-    <div className={`${outfit.variable} ${fraunces.variable} ${jetbrains.variable} ${outfit.className} h-dvh`}>
+    <div className="h-dvh">
       <AdminDataProvider data={data}>
         <AdminApp />
       </AdminDataProvider>

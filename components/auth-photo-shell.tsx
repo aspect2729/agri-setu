@@ -30,7 +30,7 @@ export function AuthPhotoShell({
         fontFamily:
           lang === "kn"
             ? "var(--font-kannada), var(--font-poppins), sans-serif"
-            : "var(--font-poppins), var(--font-geist-sans), sans-serif",
+            : "var(--font-poppins), sans-serif",
       }}
     >
       <div className={`pointer-events-none inset-0 ${pin === "fixed" ? "fixed" : "absolute"}`}>

@@ -1,4 +1,3 @@
-import { Poppins, Noto_Sans_Kannada } from "next/font/google";
 import { requireProfile } from "@/lib/get-profile";
 import { createClient } from "@/lib/supabase/server";
 import { haversineKm } from "@/lib/utils";
@@ -10,18 +9,6 @@ import {
 } from "@/components/farmer-app/farmer-app";
 
 export const dynamic = "force-dynamic";
-
-const poppins = Poppins({
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
-  variable: "--font-poppins",
-});
-
-const notoKannada = Noto_Sans_Kannada({
-  weight: ["400", "500", "600", "700"],
-  subsets: ["kannada"],
-  variable: "--font-kannada",
-});
 
 export default async function FarmerPage() {
   const profile = await requireProfile("farmer");
@@ -115,9 +102,5 @@ export default async function FarmerPage() {
     weatherPlace,
   };
 
-  return (
-    <div className={`${poppins.variable} ${notoKannada.variable}`}>
-      <FarmerApp data={data} />
-    </div>
-  );
+  return <FarmerApp data={data} />;
 }

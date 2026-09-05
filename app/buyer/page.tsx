@@ -1,4 +1,3 @@
-import { DM_Sans, DM_Mono, Fraunces } from "next/font/google";
 import { requireProfile } from "@/lib/get-profile";
 import { createClient } from "@/lib/supabase/server";
 import { BuyerDataProvider } from "@/components/buyer-app/data-context";
@@ -6,14 +5,6 @@ import { BuyerApp } from "@/components/buyer-app/buyer-app";
 import { mapBuyerData } from "@/components/buyer-app/map-data";
 
 export const dynamic = "force-dynamic";
-
-const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
-const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
-const dmMono = DM_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-dm-mono",
-});
 
 export default async function BuyerDashboard() {
   const profile = await requireProfile("buyer");
@@ -54,9 +45,7 @@ export default async function BuyerDashboard() {
   });
 
   return (
-    <div
-      className={`${dmSans.variable} ${fraunces.variable} ${dmMono.variable} ${dmSans.className} min-h-dvh`}
-    >
+    <div className="min-h-dvh">
       <BuyerDataProvider data={data}>
         <BuyerApp />
       </BuyerDataProvider>

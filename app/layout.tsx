@@ -1,16 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Poppins, Noto_Sans_Kannada } from "next/font/google";
+import { Poppins, Noto_Sans_Kannada } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
@@ -34,7 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${notoKannada.variable} h-full antialiased`}
+      className={`${poppins.variable} ${notoKannada.variable} ${poppins.className} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

@@ -1,4 +1,3 @@
-import { DM_Sans, JetBrains_Mono } from "next/font/google";
 import { requireProfile } from "@/lib/get-profile";
 import { createClient } from "@/lib/supabase/server";
 import { LogisticsDataProvider } from "@/components/logistics-app/data-context";
@@ -6,12 +5,6 @@ import { LogisticsApp } from "@/components/logistics-app/logistics-app";
 import { mapLogisticsData } from "@/components/logistics-app/map-data";
 
 export const dynamic = "force-dynamic";
-
-const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
-});
 
 export default async function LogisticsDashboard() {
   const profile = await requireProfile("logistics");
@@ -33,9 +26,7 @@ export default async function LogisticsDashboard() {
   });
 
   return (
-    <div
-      className={`${dmSans.variable} ${jetbrains.variable} ${dmSans.className} h-dvh`}
-    >
+    <div className="h-dvh">
       <LogisticsDataProvider data={data}>
         <LogisticsApp />
       </LogisticsDataProvider>

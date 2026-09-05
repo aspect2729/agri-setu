@@ -1,4 +1,3 @@
-import { Outfit, DM_Serif_Display } from "next/font/google";
 import { requireProfile } from "@/lib/get-profile";
 import { createClient } from "@/lib/supabase/server";
 import { EmployeeApp } from "@/components/employee-app/employee-app";
@@ -8,9 +7,6 @@ import { EmptyState } from "@/components/ui";
 import { DashboardShell } from "@/components/dashboard-shell";
 
 export const dynamic = "force-dynamic";
-
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
-const dmSerif = DM_Serif_Display({ weight: "400", subsets: ["latin"], variable: "--font-display" });
 
 export default async function EmployeePage() {
   const profile = await requireProfile("employee");
@@ -96,9 +92,5 @@ export default async function EmployeePage() {
     })),
   };
 
-  return (
-    <div className={`${outfit.variable} ${dmSerif.variable} ${outfit.className}`}>
-      <EmployeeApp data={data} />
-    </div>
-  );
+  return <EmployeeApp data={data} />;
 }
