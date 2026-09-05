@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { AuthPhotoShell, frostCtaStyle } from "@/components/auth-photo-shell";
-import { IllustrationFlow } from "@/components/farmer-app/icons";
 import type { Lang } from "@/components/farmer-app/translations";
 
 const COPY = {
@@ -24,17 +23,6 @@ export function LandingHero() {
 
   return (
     <AuthPhotoShell lang={lang} onLangToggle={() => setLang((l) => (l === "en" ? "kn" : "en"))}>
-      <div
-        className="rounded-2xl px-4 py-5"
-        style={{
-          background: "rgba(255,255,255,0.12)",
-          backdropFilter: "blur(16px)",
-          border: "1px solid rgba(255,255,255,0.15)",
-        }}
-      >
-        <IllustrationFlow className="w-full" tone="onDark" />
-      </div>
-
       <div>
         <h1 className="mb-2 text-2xl font-bold leading-snug text-white md:text-3xl">
           {COPY.tagline[lang]}

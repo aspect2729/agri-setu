@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { BrandLogo } from "@/components/brand-logo";
 import { LandingHero } from "@/components/landing-hero";
 
 const STEPS = [
@@ -23,22 +22,6 @@ export default function LandingPage() {
       <LandingHero />
 
       <div className="relative z-10 bg-white">
-      <header className="border-b border-hairline bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <Link href="/" className="flex items-center">
-            <BrandLogo size={48} />
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link href="/login" className="rounded-xl px-4 py-2 text-sm font-semibold text-green-primary transition hover:bg-green-light">
-              Sign in
-            </Link>
-            <Link href="/register" className="rounded-xl bg-green-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-dark">
-              Get started
-            </Link>
-          </div>
-        </div>
-      </header>
-
       <section className="bg-gradient-to-b from-green-light/70 to-white">
         <div className="mx-auto max-w-4xl px-4 py-16 text-center">
           <p className="mb-4 inline-block rounded-full bg-green-light px-4 py-1 text-xs font-semibold uppercase tracking-wide text-green-dark">
