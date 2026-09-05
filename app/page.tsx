@@ -22,51 +22,6 @@ export default function LandingPage() {
       <LandingHero />
 
       <div className="relative z-10 bg-white">
-      <section className="bg-gradient-to-b from-green-light/70 to-white">
-        <div className="mx-auto max-w-4xl px-4 py-16 text-center">
-          <p className="mb-4 inline-block rounded-full bg-green-light px-4 py-1 text-xs font-semibold uppercase tracking-wide text-green-dark">
-            Smart India Hackathon
-          </p>
-          <h2 className="text-3xl font-extrabold leading-tight text-text-primary sm:text-4xl">
-            Don&apos;t make the farmer search for the market.
-            <span className="block text-green-primary">Organize the market around the farmer.</span>
-          </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-text-secondary">
-            Agri Setu is the bridge between farmers, White Store collection centers and bulk
-            buyers: instant payment at the counter, quality-graded batches, QR-verified
-            traceability, and direct buyer ordering — all in one system.
-          </p>
-        </div>
-      </section>
-
-      {/* Problem */}
-      <section className="mx-auto max-w-6xl px-4 py-16">
-        <div className="grid gap-8 md:grid-cols-2">
-          <div>
-            <h2 className="text-2xl font-bold text-text-primary">The fragmented supply chain</h2>
-            <p className="mt-3 text-text-secondary">
-              Small and marginal farmers depend on layers of intermediaries because supply and
-              demand are both fragmented. Small quantities aren&apos;t attractive to bulk buyers,
-              quality is unverifiable, payment is slow, and prices stay opaque.
-            </p>
-            <div className="mt-5 rounded-2xl bg-error-light p-4 text-sm font-medium text-error">
-              Many farmers → multiple intermediaries → vendors and buyers
-            </div>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-text-primary">The Agri Setu model</h2>
-            <p className="mt-3 text-text-secondary">
-              Farmers bring produce to a nearby White Store, where it is weighed, quality-graded
-              and paid for immediately. Each lot becomes a QR-coded batch that buyers can browse,
-              score, order and verify — end to end.
-            </p>
-            <div className="mt-5 rounded-2xl bg-green-light p-4 text-sm font-medium text-green-dark">
-              Farmers → White Store (grade · pay · QR batch) → bulk buyers, with logistics built in
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* How it works */}
       <section className="bg-off-white py-16">
         <div className="mx-auto max-w-6xl px-4">
